@@ -1,0 +1,33 @@
+{
+  "name": "associacaojalesense",
+  "version": "1.0.0",
+  "description": "Associacao Jalesense",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon src/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JeanGabrielSilva/associacaojalesense.git"
+  },
+  "keywords": [
+    "node",
+    "node.js",
+    "react",
+    "react.js",
+    "associacao",
+    "jalesense"
+  ],
+  "author": "Jean Silva",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JeanGabrielSilva/associacaojalesense/issues"
+  },
+  "homepage": "https://github.com/JeanGabrielSilva/associacaojalesense#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "nodemon": "^3.1.0"
+  }
+}
