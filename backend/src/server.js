@@ -1,16 +1,24 @@
-const express = require('express');
-const routes = require('./routes');
-const cors = require('cors');
+import express from 'express';
+import dotenv from 'dotenv';
+import morgan from 'morgan';
+import cors from 'cors';
+import router from './routes/router.js';
+import connectDB from './database/connection.js';
+
+
 const app = express();
 
 app.use(express.json());
 app.use(cors());
-app.use(routes);
+app.use(express.urlencoded({extended: true}));
+app.use(morgan('tiny'));
 
-app.get('/', (req, res) => {
-    res.send('Teste rota básica');
-});
+dotenv.config({path:'config.env'});
+const PORT = process.env.PORT || 8001;
+connectDB();
 
-app.listen(3000, () => {
-    console.log('Listening on port 3000');
+app.use('/', router);
+
+app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
 });

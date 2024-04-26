@@ -1,78 +1,110 @@
 import axios from 'axios';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 function Login() {
-
-    const [email, setEmail] = useState('');
+    const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [user, setUser] = useState(null);
+    const [token, setToken] = useState('');
 
     const handleLogin = async (e) => {
         e.preventDefault();
 
-        console.log(email, password);
-
         try {
-            const response = await axios.post('http://localhost:3000/login',
-                JSON.stringify({email, password}),
-                {
-                    headers: { 'Content-Type': 'application/json' }
-                }            
+            const response = await axios.post(
+                'http://localhost:8080/login',
+                { username: username, password: password },
+                { headers: { 'Content-Type': 'application/json' } }
             );
-
-            console.log(response.data);
-            setUser(response.data);
-
+            const { token, ...userData } = response.data; 
+            setUser(userData);
+            setToken(token); 
+            setError('');
         } catch (error) {
-            if (!error?.response) {
+            if (!error.response) {
                 setError('Erro ao acessar o servidor');
-            } else if (error.response.status == 401) {
+            } else if (error.response.status === 401) {
                 setError('Usuário ou senha inválidos');
+            } else {
+                setError('Erro desconhecido');
             }
         }
 
+        setUsername('');
+        setPassword('');
     };
 
-    const handleLogout = async (e) => {
-        e.preventDefault();
+    const handleLogout = () => {
         setUser(null);
+        setToken('');
         setError('');
     };
 
-    return (
-      <div className="login-form-wrap">
-        {user == null ? (
-            <div>
-                <h2>Login</h2>
-                <form className='login-form'>
-                <input type="email" 
-                        name="email" 
-                        placeholder="Email" 
-                        required
-                        onChange={(e) => setEmail(e.target.value)}
-                        />
-                <input type="password" 
-                        name="password" 
-                        placeholder="Password" 
-                        required
-                        onChange={(e) => setPassword(e.target.value)} />
-                <button type="submit" 
-                        className='btn-login'
-                        onClick={(e) => handleLogin(e)}>Login</button>
-                </form>
-                <p>{error}</p>
-            </div>
-        ) : (
-            <div>
-                <h2>Olá, {user.name}</h2>
-                <button type="button" 
-                        className='btn-login'
-                        onClick={(e) => handleLogout(e)}>Logout</button> 
-            </div>
-        )}
-      </div>
-    );
-  }
+    useEffect(() => {
+        const interceptor = axios.interceptors.request.use(
+            (config) => {
+                if (token) {
+                    config.headers.Authorization = `Bearer ${token}`;
+                }
+                return config;
+            },
+            (error) => {
+                return Promise.reject(error);
+            }
+        );
 
-  export default Login;
+        return () => {
+            axios.interceptors.request.eject(interceptor);
+        };
+    }, [token]); 
+
+
+    return (
+        <div className="login-form-wrap">
+            {user === null ? (
+                <div>
+                    <h2>Login</h2>
+                    <form className='login-form' onSubmit={handleLogin}>
+                        <input
+                            type="username"
+                            name="username"
+                            placeholder="Username"
+                            required
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                        />
+                        <input
+                            type="password"
+                            name="password"
+                            placeholder="Password"
+                            required
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                        />
+                        <button
+                            type="submit"
+                            className='btn-login'
+                        >
+                            Login
+                        </button>
+                    </form>
+                    <p>{error}</p>
+                </div>
+            ) : (
+                <div>
+                    <h2>Olá, {user.username}</h2>
+                    <button
+                        type="button"
+                        className='btn-login'
+                        onClick={handleLogout}
+                    >
+                        Logout
+                    </button>
+                </div>
+            )}
+        </div>
+    );
+}
+
+export default Login;
