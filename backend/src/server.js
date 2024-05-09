@@ -4,7 +4,7 @@ import morgan from 'morgan';
 import cors from 'cors';
 import router from './routes/router.js';
 import connectDB from './database/connection.js';
-
+import connectToMySQL from './database/sql.js';
 
 const app = express();
 
@@ -16,6 +16,7 @@ app.use(morgan('tiny'));
 dotenv.config({path:'config.env'});
 const PORT = process.env.PORT || 8001;
 connectDB();
+connectToMySQL();
 
 app.use('/', router);
 

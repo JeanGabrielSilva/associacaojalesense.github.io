@@ -26,7 +26,7 @@ export const login = (req, res) => {
                     return res.status(401).send({ message: 'Credenciais inválidas' });
                 }
 
-                const token = jwt.sign({ id: user._id }, secretKey, { expiresIn: '1h' });
+                const token = jwt.sign({ id: user._id }, secretKey, { expiresIn: '2h' });
 
                 return res.send({
                     message: 'Login bem-sucedido',
