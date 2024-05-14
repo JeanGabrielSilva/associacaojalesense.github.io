@@ -1,0 +1,76 @@
+.sidebar {
+    height: 100%;
+    width: 300px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: #bdbdbdc5;
+    align-items: center;
+  }
+  
+  .sidebar h2 {
+    text-align: center;
+  }
+  
+  .sidebar ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .sidebar li {
+    padding: 10px 0;
+    text-align: center;
+  }
+  
+  .sidebar a {
+    text-decoration: none;
+    color: #333;
+    padding: 5px 10px; /* Adicione padding para criar o retângulo */
+    border: 1px solid #ccc; /* Adicione uma borda ao redor do botão */
+    border-radius: 5px;
+  }
+  
+  .sidebar a:hover {
+    color: #666;
+    background-color: #f0f0f0;
+  }
+  
+  .sidebar img {
+    width: 100%; 
+    margin-bottom: 20px;
+    max-height: 200px;
+  }
+
+  body {
+    background-color: #e4e1e1; 
+    margin: 0; 
+    padding: 0; 
+}
+
+.main-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.square-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 100px;
+  margin: auto;
+  
+
+}
+
+.square {
+  width: 250px;
+  height: 250px;
+  background-color: #ccc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 120px;
+  margin-left: 50%;
+}
+
