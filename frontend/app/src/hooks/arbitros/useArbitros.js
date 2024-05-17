@@ -65,16 +65,24 @@ const useArbitros = () => {
 
     const deleteArbitro = async (id) => {
         const token = localStorage.getItem('token');
+        if (!token) {
+            throw new Error('Token não encontrado');
+        }
+
         try {
-            await axios.delete(`http://localhost:8080/arbitros/${id}`, {
+            const response = await axios.delete(`http://localhost:8080/arbitros/${id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             });
-            setArbitros(arbitros.filter(arbitro => arbitro.id !== id));
+
+            if (response.status === 200) {
+                setArbitros(arbitros.filter(arbitro => arbitro.id !== id));
+            } else {
+                throw new Error(response.data.message || 'Erro ao excluir árbitro');
+            }
         } catch (error) {
-            console.error('Erro ao excluir árbitro:', error);
-            setError('Erro ao excluir árbitro');
+            throw new Error(error.response ? error.response.data.message : error.message);
         }
     };
 

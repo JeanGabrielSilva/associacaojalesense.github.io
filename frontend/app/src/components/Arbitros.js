@@ -21,7 +21,7 @@ function Arbitros() {
     const [showEditModal, setShowEditModal] = useState(false);
     const [currentArbitro, setCurrentArbitro] = useState(null);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const { createArbitro, editArbitro, deleteArbitro } = useArbitros();
+    const { editArbitro, deleteArbitro } = useArbitros();
 
     useEffect(() => {
         const fetchArbitros = async () => {
@@ -60,15 +60,39 @@ function Arbitros() {
     };
 
     const confirmDelete = async () => {
-        await deleteArbitro(currentArbitro.id);
-        setArbitros(arbitros.filter(a => a.id !== currentArbitro.id));
-        setShowDeleteModal(false);
-        setCurrentArbitro(null);
+        try {
+            await deleteArbitro(currentArbitro.id);
+            setArbitros(arbitros.filter(a => a.id !== currentArbitro.id));
+            setShowDeleteModal(false);
+            setCurrentArbitro(null);
+        } catch (error) {
+            console.error('Erro ao excluir árbitro:', error);
+            window.alert(error.message);
+        }
     };
 
     const handleCreateSubmit = async (arbitro) => {
-        await createArbitro(arbitro);
-        setShowCreateModal(false);
+        try {
+            await createArbitro(arbitro);
+            setShowCreateModal(false);
+        } catch (error) {
+            console.error('Erro ao criar árbitro:', error);
+            window.alert(error.message); 
+        }
+    };
+
+    const createArbitro = async (arbitro) => {
+        const token = localStorage.getItem('token');
+        try {
+            const response = await axios.post('http://localhost:8080/arbitros', arbitro, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            setArbitros(prevArbitros => [...prevArbitros, response.data]);
+        } catch (error) {
+            throw new Error(error.response ? error.response.data.message : error.message);
+        }
     };
 
     const handleEditSubmit = async (arbitro) => {
@@ -153,6 +177,7 @@ function Arbitros() {
                         arbitro={currentArbitro}
                         onConfirm={confirmDelete}
                         onCancel={() => setShowDeleteModal(false)}
+                        error={error}
                     />
                 </Modal>
             )}

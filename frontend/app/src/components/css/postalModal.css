@@ -20,6 +20,18 @@
     position: relative;
 }
 
+.modal-content-postagem {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 600px;
+    width: 100%;
+    position: relative;
+    height: 100%;
+    max-height: 90%;
+    overflow: auto;
+}
+
 .modal-close {
     position: absolute;
     top: 10px;

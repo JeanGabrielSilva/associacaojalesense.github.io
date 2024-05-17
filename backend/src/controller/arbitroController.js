@@ -88,13 +88,21 @@ export const patchArbitro = async (req, res) => {
 export const deleteArbitro = async (req, res) => {
     const id = req.params.id;
     try {
-        // verifica se existem pagamentos associados ao arbitro
+        // Verifica se existem pagamentos associados ao árbitro
         const pagamentos = await PagamentoArbitro.findAll({ where: { id_arbitro: id } });
+
         if (pagamentos && pagamentos.length > 0) {
-            return res.status(400).send({ message: "Este árbitro não pode ser excluído pois possui pagamentos associados. Remova os pagamentos primeiro." });
+            // Verifica se todos os pagamentos estão pagos
+            const pagamentosNaoPagos = pagamentos.filter(pagamento => pagamento.pago === 0);
+            if (pagamentosNaoPagos.length > 0) {
+                return res.status(400).send({ message: "Este árbitro não pode ser excluído pois possui pagamentos não pagos. Remova ou pague os pagamentos primeiro." });
+            }
+
+            // Exclui todos os pagamentos associados ao árbitro
+            await PagamentoArbitro.destroy({ where: { id_arbitro: id } });
         }
 
-        // se não houver pagamentos associados, exclui o arbitro
+        // Se todos os pagamentos estiverem pagos ou não houver pagamentos associados, exclui o árbitro
         const deleted = await Arbitro.destroy({ where: { id: id } });
         if (deleted) {
             res.send({ message: `Árbitro com o ID ${id} excluído com sucesso` });
@@ -105,3 +113,23 @@ export const deleteArbitro = async (req, res) => {
         res.status(500).send({ message: `Erro ao excluir árbitro com o ID ${id}` });
     }
 };
+
+//     const id = req.params.id;
+//     try {
+//         // verifica se existem pagamentos associados ao arbitro
+//         const pagamentos = await PagamentoArbitro.findAll({ where: { id_arbitro: id } });
+//         if (pagamentos && pagamentos.length > 0) {
+//             return res.status(400).send({ message: "Este árbitro não pode ser excluído pois possui pagamentos associados. Remova os pagamentos primeiro." });
+//         }
+
+//         // se não houver pagamentos associados, exclui o arbitro
+//         const deleted = await Arbitro.destroy({ where: { id: id } });
+//         if (deleted) {
+//             res.send({ message: `Árbitro com o ID ${id} excluído com sucesso` });
+//         } else {
+//             res.status(404).send({ message: `Não foi possível encontrar árbitro com o ID ${id}` });
+//         }
+//     } catch (err) {
+//         res.status(500).send({ message: `Erro ao excluir árbitro com o ID ${id}` });
+//     }
+// };
