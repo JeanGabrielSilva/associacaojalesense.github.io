@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
 
-function EditPostagemForm({ postagem, onSubmit }) {
+function EditPostagemForm({ postagem, onSubmit, setPostagens }) {
+
     const [formData, setFormData] = useState({
         titulo: '',
-        imagem: '',
+        imagem: null,
         conteudo: '',
         tags: '',
         status: ''
     });
-
+    
     useEffect(() => {
         if (postagem) {
             setFormData({
@@ -23,14 +24,21 @@ function EditPostagemForm({ postagem, onSubmit }) {
         setFormData({ ...formData, [name]: value });
     };
 
-    const handleSubmit = (e) => {
+    const handleImageChange = (event) => {
+        const newImage = event.target.files[0];
+        setFormData({ ...formData, imagem: newImage });
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
         // Transformar a string de tags de volta em um array
         const formattedData = {
             ...formData,
             tags: formData.tags.split(',').map(tag => tag.trim())
         };
-        onSubmit(formattedData);
+        await onSubmit(formattedData);
+        // Atualizar a lista de postagens após a edição
+        setPostagens(prevPostagens => prevPostagens.map(prevPostagem => prevPostagem._id === postagem._id ? formattedData : prevPostagem));
     };
 
     return (
@@ -46,11 +54,11 @@ function EditPostagemForm({ postagem, onSubmit }) {
                     required
                 />
                 <input
-                    type="text"
+                    type="file"
                     name="imagem"
+                    accept="image/*"
                     placeholder="URL da Imagem"
-                    value={formData.imagem}
-                    onChange={handleInputChange}
+                    onChange={handleImageChange}
                 />
                 <textarea
                     name="conteudo"

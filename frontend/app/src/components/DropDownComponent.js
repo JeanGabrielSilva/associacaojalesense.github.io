@@ -13,9 +13,9 @@ const DropDownComponent = () => {
             <div className="dropdown-toggle" onClick={toggleDropdown}>Pagamentos</div>
             <div className={`dropdown-menu ${isDropdownOpen ? 'show' : ''}`}>
                 <a href="/pagamentos-arbitros">Árbitros</a> 
-                <a href="#pagamentos-contratantes">Contratantes</a>
+                <a href="/pagamentos-contratantes">Contratantes</a>
             </div>
-        </li>
+        </li> 
     );
 };
 

@@ -1,5 +1,8 @@
 import Postagem from '../model/postagem.js';
-
+import multer from 'multer';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 export const getPostagemById = async (req, res) => {
     try {
@@ -63,15 +66,41 @@ export const getPostagensPublicadas = async (req, res) => {
     }
 };
 
-export const createPostagem = async (req, res) => {
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'uploads/');
+    },
+    filename: function (req, file, cb) {
+        cb(null, Date.now() + '-' + file.originalname);
+    }
+});
+
+const upload = multer({ storage: storage });
+
+export const createPostagem = ( upload.single('imagem'), async (req, res) => {
     try {
-        const novaPostagem = new Postagem(req.body);
+        const { titulo, conteudo, tags, status } = req.body;
+        const imagem = req.file ? req.file.path : null;
+
+        console.log('Request Body:', req.body);
+        console.log('Request File:', req.file);
+        const novaPostagem = new Postagem({
+            titulo,
+            conteudo,
+            tags: tags ? JSON.parse(tags) : [], 
+            status,
+            imagem
+        });
+
         await novaPostagem.save();
         res.status(201).json(novaPostagem);
     } catch (error) {
+        console.error('Erro ao criar postagem:', error);
         res.status(500).json({ message: error.message || 'Ocorreu algum erro ao criar a postagem.' });
     }
-};
+});
+
+export const uploadMiddleware = upload.single('imagem');
 
 export const publicPostagem = async (req, res) => {
     const id = req.params.id;
@@ -86,9 +115,15 @@ export const publicPostagem = async (req, res) => {
     }
 };
 
+
 export const updatePostagem = async (req, res) => {
     const id = req.params.id;
     try {
+        // Verifica se há uma nova imagem enviada na requisição
+        if (req.file) {
+            req.body.imagem = req.file.path; // Atualiza o caminho da imagem no corpo da requisição
+        }
+        
         const postagemAtualizada = await Postagem.findByIdAndUpdate(id, req.body, { new: true });
         if (!postagemAtualizada) {
             return res.status(404).json({ message: `Postagem com o ID ${id} não encontrada.` });

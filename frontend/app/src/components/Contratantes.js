@@ -1,53 +1,146 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import DropDownComponent from './DropDownComponent';
 import Modal from './components-contratantes/Modal';
 import CreateContratanteForm from './components-contratantes/CreateContratanteForm';
 import EditContratanteForm from './components-contratantes/EditContratanteForm';
 import ConfirmDeleteModal from './components-arbitros/ConfirmDeleteModal';
-import useContratantes from '../hooks/contratantes/useContratantes';
+// import useContratantes from '../hooks/contratantes/useContratantes';
 
 function Contratantes() {
-    // const { contratantes, error, createContratante, editContratante, deleteContratante } = useContratantes();
+
+    const [contratantes, setContratantes] = useState([]);
     const [showCreateModal, setShowCreateModal] = useState(false);
-    // const [showEditModal, setShowEditModal] = useState(false);
-    // const [currentContratante, setCurrentContratante] = useState(null);
-    // const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [currentContratante, setCurrentContratante] = useState(null);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [error, setError] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const limit = 10; // Limite de itens por página
 
-    // const handleEdit = (contratantes) => {
-    //     setCurrentContratante(contratantes);
-    //     setShowEditModal(true);
-    // };
+    useEffect(() => {
+        const fetchContratantes = async (page, limit) => {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                console.error('Token não encontrado');
+                return;
+            }
 
-    // const handleDelete = (contratantes) => {
-    //     setCurrentContratante(contratantes);
-    //     setShowDeleteModal(true);
-    // };
+            try {
+                const response = await axios.get(`http://localhost:8080/contratantes?page=${page}&limit=${limit}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                setContratantes(response.data.contratantes);
+                setTotalPages(response.data.totalPages);
+            } catch (err) {
+                setError(err.message || 'Ocorreu algum erro ao buscar os contratantes.');
+            }
+        };
 
-    // const confirmDelete = async () => {
-    //     await deleteContratante(currentContratante.id);
-    //     setShowDeleteModal(false);
-    //     setCurrentContratante(null);
-    // };
+        fetchContratantes(currentPage, limit);
+    }, [currentPage, limit]);
 
-    // const handleCreateSubmit = async (contratantes) => {
-    //     await createContratante(contratantes);
-    //     setShowCreateModal(false);
-    // };
+    const createContratante = async (contratante) => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            console.error('Token não encontrado');
+            return;
+        }
 
-    // const handleEditSubmit = async (contratantes) => {
-    //     await editContratante(currentContratante.id, contratantes);
-    //     setShowEditModal(false);
-    //     setCurrentContratante(null);
-    // };
+        try {
+            const response = await axios.post('http://localhost:8080/contratantes', contratante, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            setContratantes([...contratantes, response.data]);
+        } catch (err) {
+            setError(err.message || 'Ocorreu algum erro ao criar o contratante.');
+        }
+    };
+
+    const editContratante = async (id, contratante) => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            console.error('Token não encontrado');
+            return;
+        }
+
+        try {
+            const response = await axios.put(`http://localhost:8080/contratantes/${id}`, contratante, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            setContratantes(contratantes.map(c => (c.id === id ? response.data : c)));
+        } catch (err) {
+            setError(err.message || 'Ocorreu algum erro ao editar o contratante.');
+        }
+    };
+    
+    const deleteContratante = async (id) => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            console.error('Token não encontrado');
+            return;
+        }
+
+        try {
+            await axios.delete(`http://localhost:8080/contratantes/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            setContratantes(contratantes.filter(c => c.id !== id));
+        } catch (err) {
+            setError(err.response?.data?.message || 'Ocorreu algum erro ao deletar o contratante.');
+            alert(err.response?.data?.message || 'Ocorreu algum erro ao deletar o contratante.');
+        }
+    };
+
+    const handleCreateSubmit = async (contratante) => {
+        await createContratante(contratante);
+        setShowCreateModal(false);
+    };
+
+    const handleEditSubmit = async (contratante) => {
+        await editContratante(currentContratante.id, contratante);
+        setShowEditModal(false);
+        setCurrentContratante(null);
+    };
+
+    const handleEdit = (contratante) => {
+        setCurrentContratante(contratante);
+        setShowEditModal(true);
+    };
+
+    const handleDelete = (contratante) => {
+        setCurrentContratante(contratante);
+        setShowDeleteModal(true);
+    };
+
+    const confirmDelete = async () => {
+        await deleteContratante(currentContratante.id);
+        setShowDeleteModal(false);
+        setCurrentContratante(null);
+    };
+
+    const handlePageChange = (event) => {
+        const newPage = Number(event.target.value);
+        setCurrentPage(newPage);
+    };
 
     return (
         <div className="container">
             <div className="sidebar">
                 <h2>Menu</h2>
                 <ul>
-                    <li><a href="#arbitros">Postagens</a></li>
-                    <li><a href="#postagens">Árbitros</a></li>
-                    <li><a href="#contratantes">Contratantes</a></li>
+                    <li><a href="/arbitros">Postagens</a></li>
+                    <li><a href="/postagens">Árbitros</a></li>
+                    <li><a href="/contratantes">Contratantes</a></li>
                     <DropDownComponent/>
                 </ul>
             </div>
@@ -65,7 +158,7 @@ function Contratantes() {
                         <th>Operações</th>
                     </tr>
                 </thead>
-                {/* <tbody>
+                <tbody>
                     {contratantes.map((contratante) => (
                         <tr key={contratante.id}>
                             <td>{contratante.id}</td>
@@ -73,26 +166,44 @@ function Contratantes() {
                             <td>{contratante.contato}</td>
                             <td>{contratante.cidade}</td>
                             <td>
-                                <button className="btn-edit" onClick={() => handleEdit(contratante)}>✏️</button>
-                                <button className="btn-delete" onClick={() => handleDelete(contratante)}>🗑️</button>
+                                <button className="btn-edit"
+                                 onClick={() => handleEdit(contratante)}
+                                 >✏️</button>
+                                <button className="btn-delete"
+                                 onClick={() => handleDelete(contratante)}
+                                 >🗑️</button>
                             </td>
                         </tr>
                     ))}
-                </tbody> */}
+                </tbody>
             </table>
 
-            {/* {showCreateModal && (
+            <div className="pagination">
+                    <select value={currentPage} onChange={handlePageChange}>
+                        {Array.from({ length: totalPages }, (_, index) => (
+                            <option key={index + 1} value={index + 1}>
+                                Página {index + 1}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+
+             {showCreateModal && (
                 <Modal onClose={() => setShowCreateModal(false)}>
-                    <CreateContratanteForm onSubmit={handleCreateSubmit} />
+                    <CreateContratanteForm
+                     onSubmit={handleCreateSubmit} 
+                     />
                 </Modal>
             )}
-
             {showEditModal && (
                 <Modal onClose={() => setShowEditModal(false)}>
-                    <EditContratanteForm arbitro={currentContratante} onSubmit={handleEditSubmit} />
+                    <EditContratanteForm 
+                    contratante={currentContratante} 
+                    onSubmit={handleEditSubmit}
+                     />
                 </Modal>
             )}
-
+            
             {showDeleteModal && (
                 <Modal onClose={() => setShowDeleteModal(false)}>
                     <ConfirmDeleteModal
@@ -101,7 +212,7 @@ function Contratantes() {
                         onCancel={() => setShowDeleteModal(false)}
                     />
                 </Modal>
-            )} */}
+            )}
             </div>
         </div>
     );

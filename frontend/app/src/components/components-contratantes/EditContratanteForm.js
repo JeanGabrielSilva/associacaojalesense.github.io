@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-
+import React, { useState , useEffect } from 'react';
 
 function EditContratanteForm({ contratante, onSubmit }) {
     const [formData, setFormData] = useState({

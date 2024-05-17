@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 
-
 function CreateContratanteForm({ onSubmit }) {
     const [formData, setFormData] = useState({
         nome: '',
@@ -21,7 +20,7 @@ function CreateContratanteForm({ onSubmit }) {
     return (
         <div>
             <h2>Adicionar Novo Contratante</h2>
-            <form  onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit}>
                 <input
                     type="text"
                     name="nome"
@@ -39,7 +38,7 @@ function CreateContratanteForm({ onSubmit }) {
                     required
                 />
                 <input
-                    type="cidade"
+                    type="text"
                     name="cidade"
                     placeholder="Cidade"
                     value={formData.cidade}

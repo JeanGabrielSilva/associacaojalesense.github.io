@@ -35,13 +35,45 @@ const usePostagens = () => {
         }
     };
 
+    // const createPostagem = async (postagem) => {
+    //     try {
+    //         setLoading(true);
+    //         const token = localStorage.getItem('token');
+    //         await axios.post('http://localhost:8080/postagem', postagem, {
+    //             headers: {
+    //                 Authorization: `Bearer ${token}`
+    //             }
+    //         });
+    //         setShowCreateModal(false);
+    //         fetchPostagens(currentPage);
+    //         setLoading(false);
+    //     } catch (error) {
+    //         setLoading(false);
+    //         setError(error.message || 'Ocorreu algum erro ao criar a postagem.');
+    //     }
+    // };
+
     const createPostagem = async (postagem) => {
         try {
             setLoading(true);
             const token = localStorage.getItem('token');
-            await axios.post('http://localhost:8080/postagem', postagem, {
+            
+            const formData = new FormData();
+            formData.append('titulo', postagem.titulo);
+            formData.append('imagem', postagem.imagem); // Adiciona o arquivo de imagem
+            formData.append('conteudo', postagem.conteudo);
+            formData.append('tags', JSON.stringify(postagem.tags));
+            formData.append('status', postagem.status);
+    
+            // Log para verificar o conteúdo do FormData
+            for (let pair of formData.entries()) {
+                console.log(pair[0]+ ', ' + pair[1]); 
+            }
+    
+            await axios.post('http://localhost:8080/postagem', formData, {
                 headers: {
-                    Authorization: `Bearer ${token}`
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data'
                 }
             });
             setShowCreateModal(false);
@@ -50,27 +82,66 @@ const usePostagens = () => {
         } catch (error) {
             setLoading(false);
             setError(error.message || 'Ocorreu algum erro ao criar a postagem.');
+            console.error('Erro ao criar postagem:', error);
         }
     };
 
+    
     const editPostagem = async (id, postagem) => {
         try {
             setLoading(true);
             const token = localStorage.getItem('token');
-            await axios.put(`http://localhost:8080/postagem/${id}`, postagem, {
+            const formData = new FormData();
+            formData.append('titulo', postagem.titulo);
+            formData.append('imagem', postagem.imagem); // Adiciona a nova imagem
+            formData.append('conteudo', postagem.conteudo);
+            formData.append('tags', JSON.stringify(postagem.tags));
+            formData.append('status', postagem.status);
+    
+            for (let pair of formData.entries()) {
+                console.log(pair[0] + ', ' + pair[1]); 
+            }
+    
+            const response = await axios.put(`http://localhost:8080/postagem/${id}`, formData, {
                 headers: {
-                    Authorization: `Bearer ${token}`
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data'
                 }
             });
+    
+            console.log('Resposta do servidor:', response.data);
+    
             setShowEditModal(false);
             setCurrentPostagem(null);
             fetchPostagens(currentPage);
-            setLoading(false);
         } catch (error) {
-            setLoading(false);
+            console.error('Erro ao editar postagem:', error);
             setError(error.message || 'Ocorreu algum erro ao editar a postagem.');
+        } finally {
+            setLoading(false);
         }
     };
+    
+
+    // const editPostagem = async (id, postagem) => {
+    //     try {
+    //         setLoading(true);
+    //         const token = localStorage.getItem('token')
+
+    //         await axios.put(`http://localhost:8080/postagem/${id}`, postagem, {
+    //             headers: {
+    //                 Authorization: `Bearer ${token}`
+    //             }
+    //         });
+    //         setShowEditModal(false);
+    //         setCurrentPostagem(null);
+    //         fetchPostagens(currentPage);
+    //         setLoading(false);
+    //     } catch (error) {
+    //         setLoading(false);
+    //         setError(error.message || 'Ocorreu algum erro ao editar a postagem.');
+    //     }
+    // };
     
 
     const deletePostagem = async (id) => {
@@ -97,7 +168,7 @@ const usePostagens = () => {
     };
 
     return {
-        postagens,
+        // postagens,
         currentPage,
         totalPages,
         loading,

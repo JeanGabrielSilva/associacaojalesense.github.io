@@ -11,7 +11,8 @@ const PostagemModal = ({ postagem, onClose }) => {
         <div className="modal-overlay">
             <div className="modal-content-postagem">
                 <button className="modal-close" onClick={onClose}>X</button>
-                {postagem.imagem && <img src={postagem.imagem} alt={postagem.titulo} className="modal-imagem" />}
+                {postagem.imagem && <img src={`http://localhost:8080/${postagem.imagem}`} alt={postagem.titulo} style={{ maxWidth: '100px' }} className='modal-imagem' />}
+                {/* {postagem.imagem && <img src={postagem.imagem} alt={postagem.titulo} className="modal-imagem" />} */}
                 <h2>{postagem.titulo}</h2>
                 {paragrafoConteudo.map((paragrafo, index) => (
                     <p key={index}>{paragrafo}</p>

@@ -7,6 +7,7 @@ import PagamentoArbitros from './components/PagamentoArbitros';
 import Portal from './components/Portal';
 import Contratantes from './components/Contratantes';
 import Postagens from './components/Postagens';
+import PagamentoContratantes from './components/PagamentoContratantes';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
             <Route path="/arbitros" element={<Arbitros />} />
             <Route path="/pagamentos-arbitros" element={<PagamentoArbitros/>}/>
             <Route path="/contratantes" element={<Contratantes/>}/>
+            <Route path="/pagamentos-contratantes" element={<PagamentoContratantes/>}/>
             <Route path="/portal" element={<Portal/>}/>
             <Route path="/postagens" element={<Postagens/>}/>
           </Routes>

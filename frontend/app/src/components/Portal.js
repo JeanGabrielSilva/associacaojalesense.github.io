@@ -30,7 +30,7 @@ const Portal = () => {
             <div className="sidebar">
                 <h2>Menu</h2>
                 <ul>
-                    <li><a href="#arbitros">Publicações</a></li>
+                    <li><a href="/portal">Publicações</a></li>
                     <li><a href="#sobre">Sobre nós</a></li>
                 </ul>
             </div>
@@ -39,7 +39,9 @@ const Portal = () => {
                 <div className="postagens-grid">
                     {Array.isArray(postagens) && postagens.map((postagem) => (
                         <div key={postagem._id} className="postagem-card" onClick={() => handlePostagemClick(postagem)}>
-                            {postagem.imagem && <img src={postagem.imagem} alt={postagem.titulo} className="postagem-imagem" />}
+                            {postagem.imagem && <img src={`http://localhost:8080/${postagem.imagem}`} alt={postagem.titulo} style={{ maxWidth: '100px' }} className="postagem-imagem" />}
+
+                            {/* {postagem.imagem && <img src={postagem.imagem} alt={postagem.titulo} className="postagem-imagem" />} */}
                             <h3>{postagem.titulo}</h3>
                             <p>{postagem.conteudo.substring(0, 100)}...</p>
                             <div className="postagem-tags">

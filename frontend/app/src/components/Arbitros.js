@@ -113,9 +113,9 @@ function Arbitros() {
             <div className="sidebar">
                 <h2>Menu</h2>
                 <ul>
-                    <li><a href="#arbitros">Postagens</a></li>
-                    <li><a href="#postagens">Árbitros</a></li>
-                    <li><a href="#contratantes">Contratantes</a></li>
+                    <li><a href="/arbitros">Postagens</a></li>
+                    <li><a href="/postagens">Árbitros</a></li>
+                    <li><a href="/contratantes">Contratantes</a></li>
                     <DropDownComponent/>
                 </ul>
             </div>

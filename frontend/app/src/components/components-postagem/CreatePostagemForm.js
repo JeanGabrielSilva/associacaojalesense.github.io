@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 function CreatePostagemForm({ onSubmit }) {
     const [formData, setFormData] = useState({
         titulo: '',
-        imagem: '',
+        imagem: null, // Alterado para null para armazenar o arquivo
         conteudo: '',
         tags: '',
         status: ''
@@ -14,12 +14,16 @@ function CreatePostagemForm({ onSubmit }) {
         setFormData({ ...formData, [name]: value });
     };
 
+    const handleFileChange = (e) => {
+        setFormData({ ...formData, imagem: e.target.files[0] });
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
         // Transformar a string de tags em um array
         const formattedData = {
             ...formData,
-            tags: formData.tags.split(',').map(tag => tag.trim())
+            tags: formData.tags ? formData.tags.split(',').map(tag => tag.trim()) : []
         };
         onSubmit(formattedData);
     };
@@ -37,11 +41,11 @@ function CreatePostagemForm({ onSubmit }) {
                     required
                 />
                 <input
-                    type="text"
+                    type="file"
                     name="imagem"
-                    placeholder="URL da Imagem"
-                    value={formData.imagem}
-                    onChange={handleInputChange}
+                    placeholder="Imagem"
+                    accept="image/*"
+                    onChange={handleFileChange}
                 />
                 <textarea
                     name="conteudo"

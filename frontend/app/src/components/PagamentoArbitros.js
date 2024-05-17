@@ -89,6 +89,7 @@ const handleCreateSubmit = async (formData) => {
       setError('Erro ao criar pagamento');
   }
 };
+
     const handleEditSubmit = async (formData) => {
         try {
           const token = localStorage.getItem('token');
@@ -131,20 +132,14 @@ const handleCreateSubmit = async (formData) => {
         }
     };
 
-    // const handlePageChange = (event) => {
-    //     const newPage = Number(event.target.value);
-    //     setPagamentosPage(newPage);
-    //     setCurrentPage(newPage); // Atualizado
-    // };
-
     return (
         <div className="container">
             <div className="sidebar">
                 <h2>Menu</h2>
                 <ul>
-                    <li><a href="#arbitros">Postagens</a></li>
-                    <li><a href="#postagens">Árbitros</a></li>
-                    <li><a href="#contratantes">Contratantes</a></li>
+                    <li><a href="/arbitros">Postagens</a></li>
+                    <li><a href="/postagens">Árbitros</a></li>
+                    <li><a href="/contratantes">Contratantes</a></li>
                     <DropDownComponent />
                 </ul>
             </div>

@@ -1,56 +1,91 @@
 import Campeonato from '../model/campeonato.js';
+import Contratante from '../model/contratante.js';
 
-export const createCampeonato = async (req, res) => {
-    const newCampeonato = new Campeonato(req.body);
+export const getCampeonatosAll = async (req, res) => {
     try {
-        const savedCampeonato = await newCampeonato.save();
-        res.status(201).json(savedCampeonato);
-    } catch (error) {
-        res.status(400).json({ message: 'Erro ao criar campeonato: ' + error.message });
+        const campeonatos = await Campeonato.findAll({
+            include: [Contratante]
+        });
+        res.send(campeonatos);
+    } catch (err) {
+        res.status(500).send({ message: err.message || "Ocorreu algum erro ao buscar os campeonatos." });
     }
 };
 
 export const getCampeonatos = async (req, res) => {
     try {
-        const campeonatos = await Campeonato.find().populate('cidade');
-        res.status(200).json(campeonatos);
-    } catch (error) {
-        res.status(500).json({ message: 'Erro ao buscar campeonatos: ' + error.message });
+        const limit = 10;
+        const page = parseInt(req.query.page) || 1; 
+        const offset = (page - 1) * limit; 
+
+        const { count, rows: campeonatos } = await Campeonato.findAndCountAll({
+            limit: limit,
+            offset: offset,
+            include: [Contratante]
+        });
+
+        res.send({
+            totalItems: count,
+            totalPages: Math.ceil(count / limit),
+            currentPage: page,
+            campeonatos: campeonatos
+        });
+    } catch (err) {
+        res.status(500).send({ message: err.message || "Ocorreu algum erro ao buscar os campeonatos." });
     }
 };
 
 export const getCampeonatoById = async (req, res) => {
+    const id = req.params.id;
     try {
-        const campeonato = await Campeonato.findById(req.params.id).populate('cidade');
+        const campeonato = await Campeonato.findByPk(id, {
+            include: [Contratante]
+        });
         if (!campeonato) {
-            return res.status(404).json({ message: 'Campeonato não encontrado' });
+            return res.status(404).send({ message: `Não foi possível encontrar campeonato com o ID ${id}` });
         }
-        res.status(200).json(campeonato);
-    } catch (error) {
-        res.status(500).json({ message: 'Erro ao buscar campeonato: ' + error.message });
+        res.send(campeonato);
+    } catch (err) {
+        res.status(500).send({ message: `Erro ao acessar campeonato com o ID ${id}` });
+    }
+};
+
+export const createCampeonato = async (req, res) => {
+    try {
+        const novoCampeonato = await Campeonato.create(req.body);
+        res.send(novoCampeonato);
+    } catch (err) {
+        res.status(500).send({ message: err.message || "Ocorreu algum erro ao criar o campeonato." });
     }
 };
 
 export const updateCampeonato = async (req, res) => {
+    const id = req.params.id;
     try {
-        const updatedCampeonato = await Campeonato.findByIdAndUpdate(req.params.id, req.body, { new: true });
-        if (!updatedCampeonato) {
-            return res.status(404).json({ message: 'Campeonato não encontrado' });
+        const [updated] = await Campeonato.update(req.body, {
+            where: { id: id }
+        });
+        if (updated) {
+            const updatedCampeonato = await Campeonato.findByPk(id);
+            res.send(updatedCampeonato);
+        } else {
+            res.status(404).send({ message: `Não foi possível encontrar campeonato com o ID ${id}` });
         }
-        res.status(200).json(updatedCampeonato);
-    } catch (error) {
-        res.status(400).json({ message: 'Erro ao atualizar campeonato: ' + error.message });
+    } catch (err) {
+        res.status(500).send({ message: `Erro ao atualizar campeonato com o ID ${id}` });
     }
 };
 
 export const deleteCampeonato = async (req, res) => {
+    const id = req.params.id;
     try {
-        const campeonato = await Campeonato.findByIdAndDelete(req.params.id);
-        if (!campeonato) {
-            return res.status(404).json({ message: 'Campeonato não encontrado' });
+        const deleted = await Campeonato.destroy({ where: { id: id } });
+        if (deleted) {
+            res.send({ message: "Campeonato deletado com sucesso." });
+        } else {
+            res.status(404).send({ message: `Não foi possível encontrar campeonato com o ID ${id}` });
         }
-        res.status(200).json({ message: 'Campeonato deletado com sucesso' });
-    } catch (error) {
-        res.status(400).json({ message: 'Erro ao deletar campeonato: ' + error.message });
+    } catch (err) {
+        res.status(500).send({ message: `Erro ao deletar campeonato com o ID ${id}` });
     }
 };

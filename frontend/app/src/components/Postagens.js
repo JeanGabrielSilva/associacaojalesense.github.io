@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import DropDownComponent from './DropDownComponent'; 
 import CreatePostagemForm from './components-postagem/CreatePostagemForm';
@@ -9,11 +10,11 @@ import usePostagens from '../hooks/postagens/usePostagens';
 
 function Postagens() {
     const {
-        postagens,
+        // postagens,
         currentPage,
-        totalPages,
-        loading,
-        error,
+        // totalPages,
+        // loading,
+        // error,
         currentPostagem,
         showCreateModal,
         showEditModal,
@@ -24,21 +25,87 @@ function Postagens() {
         setCurrentPostagem,
         handlePageChange,
         createPostagem,
-        editPostagem,
+        // editPostagem,
         deletePostagem,
     } = usePostagens();
 
     const navigate = useNavigate();
-    const [setPostagens] = useState([]);
+    const limit = 10;
+    const [postagens, setPostagens] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [totalPages, setTotalPages] = useState(0);
+    const [error, setError] = useState(null);
+
+
+    
+    useEffect(() => {
+        fetchPostagens(currentPage);
+    }, [currentPage]);
+
+    const fetchPostagens = async (page) => {
+        try {
+            setLoading(true);
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8080/postagem?page=${page}&limit=${limit}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            setPostagens(response.data.postagens || []);
+            setTotalPages(response.data.totalPages || 0);
+            setLoading(false);
+        } catch (error) {
+            setLoading(false);
+            setError(error.message || 'Ocorreu algum erro ao buscar postagens.');
+        }
+    };
 
     const handleCreateSubmit = async (postagem) => {
         await createPostagem(postagem);
         setShowCreateModal(false);
     };
+
     
+    
+    const editPostagem = async (id, postagem) => {
+        try {
+            setLoading(true);
+            const token = localStorage.getItem('token');
+            const formData = new FormData();
+            formData.append('titulo', postagem.titulo);
+            formData.append('imagem', postagem.imagem); // Adiciona a nova imagem
+            formData.append('conteudo', postagem.conteudo);
+            formData.append('tags', JSON.stringify(postagem.tags));
+            formData.append('status', postagem.status);
+    
+            for (let pair of formData.entries()) {
+                console.log(pair[0] + ', ' + pair[1]); 
+            }
+    
+            const response = await axios.put(`http://localhost:8080/postagem/${id}`, formData, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+    
+            console.log('Resposta do servidor:', response.data);
+    
+            // Atualize a lista de postagens após a edição
+            setPostagens(prevPostagens => prevPostagens.map(prevPostagem => prevPostagem._id === id ? response.data : prevPostagem));
+    
+            setShowEditModal(false);
+            setCurrentPostagem(null);
+        } catch (error) {
+            console.error('Erro ao editar postagem:', error);
+            setError(error.message || 'Ocorreu algum erro ao editar a postagem.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const handleEditSubmit = async (postagem) => {
         await editPostagem(currentPostagem._id, postagem);
-        setPostagens(postagens.map(a => (a._id === currentPostagem._id ? postagem : a)));
         setShowEditModal(false);
         setCurrentPostagem(null);
     };
@@ -71,9 +138,9 @@ function Postagens() {
             <div className="sidebar">
                 <h2>Menu</h2>
                 <ul>
-                    <li><a href="#arbitros">Árbitros</a></li>
-                    <li><a href="#postagens">Postagens</a></li>
-                    <li><a href="#contratantes">Contratantes</a></li>
+                    <li><a href="/arbitros">Árbitros</a></li>
+                    <li><a href="/postagens">Postagens</a></li>
+                    <li><a href="/contratantes">Contratantes</a></li>
                     <DropDownComponent />
                 </ul>
             </div>
@@ -97,7 +164,8 @@ function Postagens() {
                             <tr key={postagem._id}>
                                 <td>{postagem._id}</td>
                                 <td>{postagem.titulo}</td>
-                                <td>{postagem.imagem && <img src={postagem.imagem} alt={postagem.titulo} style={{ maxWidth: '100px' }} />}</td>
+                                <td>{postagem.imagem && <img src={`http://localhost:8080/${postagem.imagem}`} alt={postagem.titulo} style={{ maxWidth: '100px' }} />}</td>
+                                {/* <td>{postagem.imagem && <img src={postagem.imagem} alt={postagem.titulo} style={{ maxWidth: '100px' }} />}</td> */}
                                 <td>{truncateText(postagem.conteudo, 25)}</td>
                                 <td>{postagem.tags.join(', ')}</td>
                                 <td>{postagem.status}</td>
@@ -126,7 +194,9 @@ function Postagens() {
             )}
             {showEditModal && (
                 <Modal onClose={() => setShowEditModal(false)}>
-                    <EditPostagemForm postagem={currentPostagem} onSubmit={handleEditSubmit} />
+                    {/* <EditPostagemForm postagem={currentPostagem} onSubmit={handleEditSubmit} /> */}
+                    <EditPostagemForm postagem={currentPostagem} onSubmit={handleEditSubmit} setPostagens={setPostagens} />
+
                 </Modal>
             )}
             {showDeleteModal && (
