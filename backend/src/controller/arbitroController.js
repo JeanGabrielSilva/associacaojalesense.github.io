@@ -1,10 +1,32 @@
 import Arbitro from '../model/arbitro.js';
 import PagamentoArbitro from '../model/pagamentoArbitro.js';
 
-export const getArbitros = async (req, res) => {
+export const getArbitrosAll = async (req, res) => {
     try {
         const arbitros = await Arbitro.findAll();
         res.send(arbitros);
+    } catch (err) {
+        res.status(500).send({ message: err.message || "Ocorreu algum erro ao buscar os árbitros." });
+    }
+};
+
+export const getArbitros = async (req, res) => {
+    try {
+        const limit = 10;
+        const page = parseInt(req.query.page) || 1; 
+        const offset = (page - 1) * limit; 
+
+        const { count, rows: arbitros } = await Arbitro.findAndCountAll({
+            limit: limit,
+            offset: offset
+        });
+
+        res.send({
+            totalItems: count,
+            totalPages: Math.ceil(count / limit),
+            currentPage: page,
+            arbitros: arbitros
+        });
     } catch (err) {
         res.status(500).send({ message: err.message || "Ocorreu algum erro ao buscar os árbitros." });
     }

@@ -19,7 +19,8 @@ function Login() {
             );
             const { token, ...userData } = response.data; 
             setUser(userData);
-            setToken(token); 
+            setToken(token);
+            localStorage.setItem('token', token); 
             setError('');
         } catch (error) {
             if (!error.response) {

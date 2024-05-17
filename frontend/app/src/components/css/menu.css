@@ -1,0 +1,107 @@
+
+.container {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+  }
+  
+  .sidebar {
+    width: 250px;
+    height: 100vh;
+    background-color: #2b3e51;
+    color: white;
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+  }
+  
+  .sidebar h2 {
+    margin-bottom: 30px;
+    font-size: 1.5rem;
+    text-align: center;
+  }
+  
+  .sidebar ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .sidebar ul li {
+    margin: 15px 0;
+  }
+  
+  .sidebar ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 1rem;
+    display: block;
+    padding: 10px;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+  }
+  
+  .sidebar ul li a:hover {
+    background-color: #3ca9e2;
+    color: #2b3e51;
+  }
+  
+  /* Styles for the dropdown menu */
+  .dropdown {
+    position: relative;
+  }
+  
+  .dropdown .dropdown-toggle {
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1rem;
+    padding: 10px;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+    position: relative;
+  }
+
+  .dropdown .dropdown-toggle:hover{
+    color: white;
+    background-color: #3ca9e2;
+  }
+
+  .dropdown .dropdown-toggle::after {
+    content: '▼'; 
+    font-size: 0.75rem;
+    margin-left: 10px;
+    transition: transform 0.3s;
+}
+  
+  .dropdown .dropdown-menu {
+    display: none;
+    position: absolute;
+    left: 0;
+    top: 100%;
+    background-color: #2b3e51;
+    margin-top: 10px;
+    width: 100%;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    z-index: 1;
+  }
+  
+  .dropdown .dropdown-menu a {
+    padding: 10px;
+    border-bottom: 1px solid black;
+    color: white;
+    text-decoration: none;
+    display: block;
+    background-color: #516685;
+  }
+  
+  .dropdown .dropdown-menu a:last-child {
+    border-bottom: none;
+  }
+  
+  .dropdown-menu.show {
+    display: block;
+  }
+  .dropdown a:hover {
+    background-color: #3ca9e2;
+  }

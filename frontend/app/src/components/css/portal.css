@@ -1,0 +1,74 @@
+
+.portal {
+    padding: 20px;
+    width: 100%;
+    overflow: auto;
+}
+
+.postagens-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    margin: 2rem 2rem;
+}
+
+.postagem-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 16px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    height: auto; /* Altura automática para permitir que o conteúdo cresça */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+    max-height: 75%;
+    min-height: 50vh;
+    height: 45vh;
+}
+
+.postagem-imagem {
+    width: 100%;
+    height: 120px; /* Altura fixa para a imagem */
+    object-fit: cover; /* Garante que a imagem se ajuste ao contêiner */
+    border-radius: 8px 8px 0 0;
+}
+
+.postagem-card h3 {
+    margin: 16px 0 8px;
+    font-size: 1.0em;
+    flex-shrink: 0; /* Impede que o título encolha */
+}
+
+.postagem-card p {
+    margin: 8px 0;
+    flex-grow: 1; /* Permite que o conteúdo cresça para ocupar espaço */
+    overflow: hidden; /* Esconde o excesso de texto */
+    text-overflow: ellipsis; /* Adiciona reticências ao texto excedente */
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* Limita o número de linhas */
+    -webkit-box-orient: vertical;
+}
+
+.postagem-tags {
+    margin: 8px 0;
+    flex-shrink: 0; /* Impede que as tags encolham */
+}
+
+.postagem-tag {
+    display: inline-block;
+    background-color: #f0f0f0;
+    color: #333;
+    padding: 4px 8px;
+    margin-right: 4px;
+    border-radius: 4px;
+    font-size: 0.9em;
+}
+
+.postagem-data {
+    font-size: 0.9em;
+    color: #888;
+    flex-shrink: 0; /* Impede que a data encolha */
+}

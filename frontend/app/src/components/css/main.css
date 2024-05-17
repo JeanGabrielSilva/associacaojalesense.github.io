@@ -1,0 +1,129 @@
+
+.main-table {
+    padding: 20px;
+    text-align: center;
+    background-color: #fff;
+    border-radius: 4px;
+    box-shadow: 0px 30px 50px 0px rgba(0, 0, 0, 0.2);
+    max-width: 80%;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+  }
+  
+  .main-table h2 {
+    margin-bottom: 20px;
+    font-size: 2rem;
+    color: #2b3e51;
+  }
+  
+  .main-table table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0 auto;
+    font-size: 0.9rem; 
+    margin-bottom: 2rem;
+  }
+  
+  .main-table th,
+  .main-table td {
+    border: 1px solid #ddd;
+    padding: 8px; 
+    text-align: center;
+    min-height: 2.2rem; 
+    height: 2rem;
+    max-height: 2rem;
+    max-width: 15rem;
+  }
+  
+  .main-table th {
+    background-color: #3ca9e2;
+    color: white;
+    text-transform: uppercase;
+    font-weight: bold;
+    min-height: 2.2rem; 
+    height: 2rem;
+    max-height: 2rem;
+    max-width: 15rem;
+  }
+  
+  .main-table tr:nth-child(even) {
+    background-color: #f9f9f9; 
+  }
+  
+  .main-table tr:hover {
+    background-color: #e0e0e0;
+  }
+  
+  .main-table tr {
+    transition: background-color 0.2s ease;
+  }
+  
+  .main-table p {
+    color: red;
+    font-weight: bold;
+  }
+
+  .btn-open-modal {
+    background-color: #3ca9e2;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    margin-bottom: 20px;
+    transition: background-color 0.2s ease;
+}
+
+.btn-open-modal:hover {
+    background-color: #329dd5;
+}
+
+.btn-edit,
+.btn-delete {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    margin: 0 5px;
+    transition: color 0.2s ease;
+}
+
+.btn-edit:hover {
+    color: #4CAF50;
+}
+
+.btn-delete:hover {
+    color: #f44336;
+} 
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.pagination select {
+  background-color: #3ca9e2;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  margin: 0 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+  margin-bottom: 2rem;
+}
+
+.pagination select:focus {
+  outline: none;
+}
+
+.pagination select option {
+  background-color: white;
+  color: black;
+}
+
+

@@ -2,9 +2,9 @@ import express from 'express';
 import { getUsers, login, requireAuth } from '../controller/loginController.js';
 import { createCidade, getCidades, getCidadeById, updateCidade, deleteCidade } from '../controller/cidadeController.js';
 import { createCampeonato, getCampeonatos, getCampeonatoById, updateCampeonato, deleteCampeonato} from '../controller/campeonatoController.js';
-import { createArbitro, deleteArbitro, getArbitroById, getArbitros, patchArbitro, updateArbitro } from '../controller/arbitroController.js';
+import { createArbitro, deleteArbitro, getArbitroById, getArbitros, getArbitrosAll, patchArbitro, updateArbitro } from '../controller/arbitroController.js';
 import { createPagamentoArbitro, deletePagamentoArbitro, getPagamentoArbitroById, getPagamentosArbitro, patchPagamentoArbitro, updatePagamentoArbitro } from '../controller/pagArbitroController.js';
-import { createPostagem, deletePostagem, getPostagens, getPostagensPublicadas, publicPostagem, updatePostagem } from '../controller/postagemController.js';
+import { createPostagem, deletePostagem, getPostagemById, getPostagens, getPostagensPublicadas, publicPostagem, updatePostagem } from '../controller/postagemController.js';
 
 const route = express.Router();
 
@@ -13,6 +13,7 @@ route.get('/users', getUsers);
 route.post('/login', login);
 
 //POSTAGENS
+route.get('/postagem/:id', requireAuth, getPostagemById);
 route.get('/postagem', requireAuth, getPostagens);
 route.get('/portal', getPostagensPublicadas);
 route.post('/postagem', requireAuth, createPostagem);
@@ -35,6 +36,7 @@ route.put('/campeonatos/:id', requireAuth, updateCampeonato);
 route.delete('/campeonatos/:id', requireAuth, deleteCampeonato);
 
 //ARBITROS
+route.get('/arbitros/all', requireAuth, getArbitrosAll)
 route.get('/arbitros', requireAuth, getArbitros);
 route.get('/arbitros/:id', requireAuth, getArbitroById);
 route.post('/arbitros', requireAuth, createArbitro);

@@ -1,15 +1,28 @@
 import PagamentoArbitro from '../model/pagamentoArbitro.js';
 import Arbitro from '../model/arbitro.js';
 
+
 export const getPagamentosArbitro = async (req, res) => {
     try {
-        const pagamentos = await PagamentoArbitro.findAll({
+        const limit = parseInt(req.query.limit) || 10; 
+        const page = parseInt(req.query.page) || 1;
+        const offset = (page - 1) * limit;
+
+        const { count, rows: pagamentos } = await PagamentoArbitro.findAndCountAll({
             include: [{
                 model: Arbitro,
                 as: 'arbitro'
-            }]
+            }],
+            limit: limit,
+            offset: offset
         });
-        res.send(pagamentos);
+
+        res.send({
+            totalItems: count,
+            totalPages: Math.ceil(count / limit),
+            currentPage: page,
+            pagamentos: pagamentos
+        });
     } catch (err) {
         res.status(500).send({ message: err.message || "Ocorreu algum erro ao buscar os pagamentos." });
     }
