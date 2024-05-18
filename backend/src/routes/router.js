@@ -2,10 +2,10 @@ import express from 'express';
 import { getUsers, login, requireAuth } from '../controller/loginController.js';
 // import { createCidade, getCidades, getCidadeById, updateCidade, deleteCidade } from '../controller/cidadeController.js';
 import { createCampeonato, getCampeonatos, getCampeonatoById, updateCampeonato, getCampeonatosAll, deleteCampeonato} from '../controller/campeonatoController.js';
-import { createArbitro, deleteArbitro, getArbitroById, getArbitros, getArbitrosAll, patchArbitro, updateArbitro } from '../controller/arbitroController.js';
+import { createArbitro, deleteArbitro, getArbitroById, getArbitroFinanceiro, getArbitros, getArbitrosAll, patchArbitro, updateArbitro } from '../controller/arbitroController.js';
 import { createPagamentoArbitro, deletePagamentoArbitro, getPagamentoArbitroById, getPagamentosArbitro, patchPagamentoArbitro, updatePagamentoArbitro } from '../controller/pagArbitroController.js';
 import { createPostagem, uploadMiddleware, deletePostagem, getPostagemById, getPostagens, getPostagensPublicadas, publicPostagem, updatePostagem } from '../controller/postagemController.js';
-import { createContratante, deleteContratante, getContratanteById, getContratantes, getContratantesAll, updateContratante } from '../controller/contratanteController.js';
+import { createContratante, deleteContratante, getContratanteById, getContratanteFinanceiro, getContratantes, getContratantesAll, updateContratante } from '../controller/contratanteController.js';
 import { createPagamento, deletePagamento, getPagamentoById, getPagamentos, getPagamentosAll, updatePagamento } from '../controller/pagContratanteController.js';
 const route = express.Router();
 
@@ -45,9 +45,10 @@ route.put('/pagamento-contratante/:id', requireAuth, updatePagamento);
 route.delete('/pagamento-contratante/:id', requireAuth, deletePagamento)
 
 //ARBITROS
-route.get('/arbitros/all', requireAuth, getArbitrosAll)
+route.get('/arbitros/all', requireAuth, getArbitrosAll);
 route.get('/arbitros', requireAuth, getArbitros);
 route.get('/arbitros/:id', requireAuth, getArbitroById);
+route.get('/financeiro/arbitro/:id', requireAuth, getArbitroFinanceiro);
 route.post('/arbitros', requireAuth, createArbitro);
 route.put('/arbitros/:id', requireAuth, updateArbitro);
 route.patch('/arbitros/:id', requireAuth, patchArbitro);
@@ -56,6 +57,7 @@ route.delete('/arbitros/:id', requireAuth, deleteArbitro);
 route.get('/contratantes/all', requireAuth, getContratantesAll)
 route.get('/contratantes', requireAuth, getContratantes);
 route.get('/contratantes/:id', requireAuth, getContratanteById);
+route.get('/financeiro/contratante/:id', requireAuth, getContratanteFinanceiro);
 route.post('/contratantes', requireAuth, createContratante);
 route.put('/contratantes/:id', requireAuth, updateContratante);
 route.delete('/contratantes/:id', requireAuth, deleteContratante);

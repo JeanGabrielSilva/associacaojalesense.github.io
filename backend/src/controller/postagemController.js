@@ -4,6 +4,9 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 export const getPostagemById = async (req, res) => {
     try {
         const { id } = req.params;
@@ -134,6 +137,8 @@ export const updatePostagem = async (req, res) => {
     }
 };
 
+
+
 export const deletePostagem = async (req, res) => {
     const id = req.params.id;
     try {
@@ -141,8 +146,22 @@ export const deletePostagem = async (req, res) => {
         if (!postagemExcluida) {
             return res.status(404).json({ message: `Postagem com o ID ${id} não encontrada.` });
         }
+
+        // Deletar a imagem associada à postagem
+        if (postagemExcluida.imagem) {
+            const imagePath = path.resolve(__dirname, '../../uploads', path.basename(postagemExcluida.imagem));
+            fs.unlink(imagePath, (err) => {
+                if (err) {
+                    console.error(`Erro ao deletar a imagem: ${err.message}`);
+                } else {
+                    console.log(`Imagem ${imagePath} deletada com sucesso.`);
+                }
+            });
+        }
+
         res.json({ message: `Postagem com o ID ${id} excluída com sucesso.` });
     } catch (error) {
+        console.error(`Erro ao excluir postagem: ${error.message}`);
         res.status(500).json({ message: error.message || 'Ocorreu algum erro ao excluir a postagem.' });
     }
 };

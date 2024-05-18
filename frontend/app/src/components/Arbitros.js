@@ -8,6 +8,8 @@ import Modal from './components-arbitros/Modal';
 import CreateArbitroForm from './components-arbitros/CreateArbitroForm';
 import EditArbitroForm from './components-arbitros/EditArbitroForm';
 import ConfirmDeleteModal from './components-arbitros/ConfirmDeleteModal';
+import FinanceiroArbitroForm from './components-arbitros/FinanceiroArbitroForm';
+import Logout from './Logout';
 
 function Arbitros() {
     const navigate = useNavigate();
@@ -17,6 +19,7 @@ function Arbitros() {
     const limit = 10; 
     const [totalPages, setTotalPages] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
+    const [showFinanceiroModal, setShowFinanceiroModal] = useState(false);
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
     const [currentArbitro, setCurrentArbitro] = useState(null);
@@ -108,15 +111,22 @@ function Arbitros() {
         setCurrentPage(newPage);
     };
 
+    const handleFinanceiro = (arbitro) => {
+        setCurrentArbitro(arbitro);
+        setShowFinanceiroModal(true);
+    };
+
     return (
         <div className="container">
             <div className="sidebar">
                 <h2>Menu</h2>
                 <ul>
-                    <li><a href="/arbitros">Postagens</a></li>
-                    <li><a href="/postagens">Árbitros</a></li>
+                    <li><a href="/postagens">Postagens</a></li>
+                    <li><a href="/arbitros">Árbitros</a></li>
                     <li><a href="/contratantes">Contratantes</a></li>
+                    <li><a href="/campeonatos">Campeonatos</a></li>
                     <DropDownComponent/>
+                    <Logout />
                 </ul>
             </div>
             <div className="main-table">
@@ -131,6 +141,7 @@ function Arbitros() {
                             <th>Idade</th>
                             <th>Email</th>
                             <th>Telefone</th>
+                            <th>Financeiro</th>
                             <th>Operações</th>
                         </tr>
                     </thead>
@@ -142,6 +153,9 @@ function Arbitros() {
                                 <td>{arbitro.idade}</td>
                                 <td>{arbitro.email}</td>
                                 <td>{arbitro.telefone}</td>
+                                <td>
+                                    <button className="btn-financeiro" onClick={() => handleFinanceiro(arbitro)}>📈</button>
+                                </td>
                                 <td>
                                     <button className="btn-edit" onClick={() => handleEdit(arbitro)}>✏️</button>
                                     <button className="btn-delete" onClick={() => handleDelete(arbitro)}>🗑️</button>
@@ -160,6 +174,15 @@ function Arbitros() {
                     </select>
                 </div>
             </div>
+            {showFinanceiroModal && (
+                <Modal onClose={() => setShowFinanceiroModal(false)}>
+                    <FinanceiroArbitroForm 
+                        arbitro={currentArbitro}
+                        arbitroId={currentArbitro?.id} 
+                        onClose={() => setShowFinanceiroModal(false)} 
+                    />
+                </Modal>
+            )}
 
             {showCreateModal && (
                 <Modal onClose={() => setShowCreateModal(false)}>

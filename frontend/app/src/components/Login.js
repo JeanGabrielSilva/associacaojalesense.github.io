@@ -1,5 +1,7 @@
 import axios from 'axios';
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 
 function Login() {
     const [username, setUsername] = useState('');
@@ -7,6 +9,8 @@ function Login() {
     const [error, setError] = useState('');
     const [user, setUser] = useState(null);
     const [token, setToken] = useState('');
+    const navigate = useNavigate();
+
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -22,6 +26,7 @@ function Login() {
             setToken(token);
             localStorage.setItem('token', token); 
             setError('');
+            navigate('/postagens');
         } catch (error) {
             if (!error.response) {
                 setError('Erro ao acessar o servidor');
@@ -40,6 +45,7 @@ function Login() {
         setUser(null);
         setToken('');
         setError('');
+        localStorage.removeItem('token')
     };
 
     useEffect(() => {

@@ -5,6 +5,7 @@ import CreatePagamentoForm from './components-pagcontratantes/CreatePagamentoFor
 import EditPagamentoForm from './components-pagcontratantes/EditPagamentoForm';
 import ConfirmDeleteModal from './components-pagcontratantes/ConfirmDeleteModal';
 import DropDownComponent from './DropDownComponent';
+import Logout from './Logout';
 
 function PagamentoContratantes() {
     const [pagamentos, setPagamentos] = useState([]); 
@@ -147,10 +148,12 @@ function PagamentoContratantes() {
             <div className="sidebar">
                 <h2>Menu</h2>
                 <ul>
-                    <li><a href="/arbitros">Postagens</a></li>
-                    <li><a href="/postagens">Árbitros</a></li>
+                    <li><a href="/postagens">Postagens</a></li>
+                    <li><a href="/arbitros">Árbitros</a></li>
                     <li><a href="/contratantes">Contratantes</a></li>
+                    <li><a href="/campeonatos">Campeonatos</a></li>
                     <DropDownComponent/>
+                    <Logout />
                 </ul>
             </div>
             <div className="main-table">

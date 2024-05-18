@@ -40,6 +40,11 @@
     border: none;
     font-size: 1.5em;
     cursor: pointer;
+    background: #333;
+    border-radius: 2rem;
+    color: #fff; 
+    padding: 10px 15px;
+    font-size: 20px;
 }
 
 .modal-imagem {

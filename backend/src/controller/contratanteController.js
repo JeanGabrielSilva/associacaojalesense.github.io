@@ -46,6 +46,37 @@ export const getContratanteById = async (req, res) => {
     }
 };
 
+export const getContratanteFinanceiro = async (req, res) => {
+    const id = req.params.id;
+    try {
+        const contratante = await Contratante.findByPk(id, {
+            include: [
+                {
+                    model: PagamentoContratante,
+                    attributes: ['valor', 'pago'],
+                },
+            ],
+        });
+
+        if (!contratante) {
+            return res.status(404).send({ message: `Não foi possível encontrar contratante com o ID ${id}` });
+        }
+
+        const pagamentos = contratante.pagamento_contratantes;
+        const debito = pagamentos.filter(p => p.pago === 0).reduce((acc, p) => acc + parseFloat(p.valor), 0);
+        const credito = pagamentos.filter(p => p.pago === 1).reduce((acc, p) => acc + parseFloat(p.valor), 0);
+
+        res.send({
+            contratante: contratante,
+            pagamentos: pagamentos,
+            debito: debito,
+            credito: credito,
+        });
+    } catch (err) {
+        res.status(500).send({ message: `Erro ao acessar pagamentos do contratante com o ID ${id}` });
+    }
+};
+
 export const createContratante = async (req, res) => {
     try {
         const novoContratante = await Contratante.create(req.body);

@@ -7,14 +7,11 @@ import EditPostagemForm from './components-postagem/EditPostagemForm';
 import ConfirmDeleteModal from './components-postagem/ConfirmDeleteModal';
 import Modal from './components-postagem/Modal';
 import usePostagens from '../hooks/postagens/usePostagens';
+import Logout from './Logout';
 
 function Postagens() {
     const {
-        // postagens,
         currentPage,
-        // totalPages,
-        // loading,
-        // error,
         currentPostagem,
         showCreateModal,
         showEditModal,
@@ -24,9 +21,6 @@ function Postagens() {
         setShowDeleteModal,
         setCurrentPostagem,
         handlePageChange,
-        createPostagem,
-        // editPostagem,
-        deletePostagem,
     } = usePostagens();
 
     const navigate = useNavigate();
@@ -36,8 +30,6 @@ function Postagens() {
     const [totalPages, setTotalPages] = useState(0);
     const [error, setError] = useState(null);
 
-
-    
     useEffect(() => {
         fetchPostagens(currentPage);
     }, [currentPage]);
@@ -47,9 +39,7 @@ function Postagens() {
             setLoading(true);
             const token = localStorage.getItem('token');
             const response = await axios.get(`http://localhost:8080/postagem?page=${page}&limit=${limit}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
+                headers: { Authorization: `Bearer ${token}` }
             });
             setPostagens(response.data.postagens || []);
             setTotalPages(response.data.totalPages || 0);
@@ -61,71 +51,91 @@ function Postagens() {
     };
 
     const handleCreateSubmit = async (postagem) => {
-        await createPostagem(postagem);
-        setShowCreateModal(false);
-    };
-
-    
-    
-    const editPostagem = async (id, postagem) => {
         try {
             setLoading(true);
             const token = localStorage.getItem('token');
             const formData = new FormData();
             formData.append('titulo', postagem.titulo);
-            formData.append('imagem', postagem.imagem); // Adiciona a nova imagem
+            formData.append('imagem', postagem.imagem);
             formData.append('conteudo', postagem.conteudo);
+            // formData.append('tags', postagem.tags.join(', '));
             formData.append('tags', JSON.stringify(postagem.tags));
             formData.append('status', postagem.status);
-    
-            for (let pair of formData.entries()) {
-                console.log(pair[0] + ', ' + pair[1]); 
-            }
-    
-            const response = await axios.put(`http://localhost:8080/postagem/${id}`, formData, {
+
+            const response = await axios.post('http://localhost:8080/postagem', formData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     'Content-Type': 'multipart/form-data'
                 }
             });
-    
-            console.log('Resposta do servidor:', response.data);
-    
-            // Atualize a lista de postagens após a edição
-            setPostagens(prevPostagens => prevPostagens.map(prevPostagem => prevPostagem._id === id ? response.data : prevPostagem));
-    
-            setShowEditModal(false);
-            setCurrentPostagem(null);
-        } catch (error) {
-            console.error('Erro ao editar postagem:', error);
-            setError(error.message || 'Ocorreu algum erro ao editar a postagem.');
-        } finally {
+            setPostagens([...postagens, response.data]);
+            setShowCreateModal(false);
             setLoading(false);
+        } catch (error) {
+            setLoading(false);
+            setError(error.message || 'Ocorreu algum erro ao criar a postagem.');
+            console.error('Erro ao criar postagem:', error);
         }
     };
 
+    
     const handleEditSubmit = async (postagem) => {
-        await editPostagem(currentPostagem._id, postagem);
-        setShowEditModal(false);
-        setCurrentPostagem(null);
+        try {
+            setLoading(true);
+            const token = localStorage.getItem('token');
+            const formData = new FormData();
+            formData.append('titulo', postagem.titulo);
+            formData.append('imagem', postagem.imagem);
+            formData.append('conteudo', postagem.conteudo);
+            formData.append('tags', postagem.tags.join(', '));
+            // formData.append('tags', JSON.stringify(postagem.tags));
+            formData.append('status', postagem.status);
+
+            const response = await axios.put(`http://localhost:8080/postagem/${currentPostagem._id}`, formData, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+
+            setPostagens(postagens.map(p => (p._id === currentPostagem._id ? response.data : p)));
+            setShowEditModal(false);
+            setCurrentPostagem(null);
+            setLoading(false);
+        } catch (error) {
+            setLoading(false);
+            setError(error.message || 'Ocorreu algum erro ao editar a postagem.');
+            console.error('Erro ao editar postagem:', error);
+        }
     };
 
     const handleEdit = (postagem) => {
         setCurrentPostagem(postagem);
         setShowEditModal(true);
     };
-
     const handleDelete = (postagem) => {
         setCurrentPostagem(postagem);
         setShowDeleteModal(true);
     };
 
     const confirmDelete = async () => {
-        await deletePostagem(currentPostagem._id);
-        setShowDeleteModal(false);
-        setCurrentPostagem(null);
+        try {
+            setLoading(true);
+            const token = localStorage.getItem('token');
+            await axios.delete(`http://localhost:8080/postagem/${currentPostagem._id}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setPostagens(postagens.filter(p => p._id !== currentPostagem._id));
+            setShowDeleteModal(false);
+            setCurrentPostagem(null);
+            setLoading(false);
+        } catch (error) {
+            setLoading(false);
+            setError(error.message || 'Ocorreu algum erro ao excluir a postagem.');
+            console.error('Erro ao excluir postagem:', error);
+        }
     };
-    
+
     const truncateText = (text, length) => {
         if (text.length > length) {
             return text.substring(0, length) + '...';
@@ -141,12 +151,16 @@ function Postagens() {
                     <li><a href="/arbitros">Árbitros</a></li>
                     <li><a href="/postagens">Postagens</a></li>
                     <li><a href="/contratantes">Contratantes</a></li>
+                    <li><a href="/campeonatos">Campeonatos</a></li>
                     <DropDownComponent />
+                    <Logout />
                 </ul>
             </div>
             <div className="main-table">
                 <h2>Postagens</h2>
                 <button className="btn-open-modal" onClick={() => setShowCreateModal(true)}>Adicionar postagem</button>
+                {loading ? <p>Carregando...</p> : null}
+                {error && <p>{error}</p>}
                 <table>
                     <thead>
                         <tr>
@@ -164,10 +178,35 @@ function Postagens() {
                             <tr key={postagem._id}>
                                 <td>{postagem._id}</td>
                                 <td>{postagem.titulo}</td>
-                                <td>{postagem.imagem && <img src={`http://localhost:8080/${postagem.imagem}`} alt={postagem.titulo} style={{ maxWidth: '100px' }} />}</td>
-                                {/* <td>{postagem.imagem && <img src={postagem.imagem} alt={postagem.titulo} style={{ maxWidth: '100px' }} />}</td> */}
+                                <td>{postagem.imagem && <img src={`http://localhost:8080/${postagem.imagem}`} alt={postagem.titulo} style={{ maxWidth: '100px', maxHeight: '200%' }} />}</td>
                                 <td>{truncateText(postagem.conteudo, 25)}</td>
-                                <td>{postagem.tags.join(', ')}</td>
+                                {/* <td>{postagem.tags.join(', ')}</td>                            */}
+                                {/* <td>
+                                    <div className="postagem-tags">
+                                        {Array.isArray(postagem.tags) ? postagem.tags.map((tag, index) => (
+                                            <span key={index} className="postagem-tag">{tag}</span>
+                                        )) : JSON.parse(postagem.tags).map((tag, index) => (
+                                            <span key={index} className="postagem-tag">{tag}</span>
+                                        ))}
+                                    </div>
+                                </td> */}
+                                {/* <td>
+                                    <div className="postagem-tags">
+                                        {Array.isArray(postagem.tags) ? postagem.tags.map((tag, index) => (
+                                            <span key={index} className="postagem-tag">{tag}</span>
+                                        )) : postagem.tags.split(',').map((tag, index) => (
+                                            <span key={index} className="postagem-tag">{tag.trim()}</span>
+                                        ))}
+                                    </div>
+                                </td> */}
+
+                                <td>
+                                    <div className="postagem-tags">
+                                        {postagem.tags.map((tag, index) => (
+                                            <span key={index} className="postagem-tag">{tag}</span>
+                                        ))}
+                                    </div>
+                                </td>  
                                 <td>{postagem.status}</td>
                                 <td>
                                     <button className="btn-edit" onClick={() => handleEdit(postagem)}>✏️</button>
@@ -194,9 +233,7 @@ function Postagens() {
             )}
             {showEditModal && (
                 <Modal onClose={() => setShowEditModal(false)}>
-                    {/* <EditPostagemForm postagem={currentPostagem} onSubmit={handleEditSubmit} /> */}
                     <EditPostagemForm postagem={currentPostagem} onSubmit={handleEditSubmit} setPostagens={setPostagens} />
-
                 </Modal>
             )}
             {showDeleteModal && (
@@ -213,3 +250,5 @@ function Postagens() {
 }
 
 export default Postagens;
+
+

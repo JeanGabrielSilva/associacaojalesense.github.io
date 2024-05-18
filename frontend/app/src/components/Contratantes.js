@@ -4,12 +4,15 @@ import DropDownComponent from './DropDownComponent';
 import Modal from './components-contratantes/Modal';
 import CreateContratanteForm from './components-contratantes/CreateContratanteForm';
 import EditContratanteForm from './components-contratantes/EditContratanteForm';
-import ConfirmDeleteModal from './components-arbitros/ConfirmDeleteModal';
+import ConfirmDeleteModal from './components-contratantes/ConfirmDeleteModal';
+import FinanceiroContratanteForm from './components-contratantes/FinanceiroContratanteForm';
+import Logout from './Logout';
 // import useContratantes from '../hooks/contratantes/useContratantes';
 
 function Contratantes() {
 
     const [contratantes, setContratantes] = useState([]);
+    const [showFinanceiroModal, setShowFinanceiroModal] = useState(false);
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
     const [currentContratante, setCurrentContratante] = useState(null);
@@ -127,6 +130,11 @@ function Contratantes() {
         setShowDeleteModal(false);
         setCurrentContratante(null);
     };
+    
+    const handleFinanceiro = (contratante) => {
+        setCurrentContratante(contratante);
+        setShowFinanceiroModal(true);
+    };
 
     const handlePageChange = (event) => {
         const newPage = Number(event.target.value);
@@ -138,10 +146,12 @@ function Contratantes() {
             <div className="sidebar">
                 <h2>Menu</h2>
                 <ul>
-                    <li><a href="/arbitros">Postagens</a></li>
-                    <li><a href="/postagens">Árbitros</a></li>
+                    <li><a href="/postagens">Postagens</a></li>
+                    <li><a href="/arbitros">Árbitros</a></li>
                     <li><a href="/contratantes">Contratantes</a></li>
+                    <li><a href="/campeonatos">Campeonatos</a></li>
                     <DropDownComponent/>
+                    <Logout />
                 </ul>
             </div>
             <div className="main-table">
@@ -155,6 +165,7 @@ function Contratantes() {
                         <th>Nome</th>
                         <th>Contato</th>
                         <th>Cidade</th>
+                        <th>Financeiro</th>
                         <th>Operações</th>
                     </tr>
                 </thead>
@@ -165,6 +176,9 @@ function Contratantes() {
                             <td>{contratante.nome}</td>
                             <td>{contratante.contato}</td>
                             <td>{contratante.cidade}</td>
+                            <td>
+                                    <button className="btn-financeiro" onClick={() => handleFinanceiro(contratante)}>📈</button>
+                                </td>
                             <td>
                                 <button className="btn-edit"
                                  onClick={() => handleEdit(contratante)}
@@ -187,6 +201,16 @@ function Contratantes() {
                         ))}
                     </select>
                 </div>
+
+                {showFinanceiroModal && (
+                <Modal onClose={() => setShowFinanceiroModal(false)}>
+                    <FinanceiroContratanteForm 
+                        contratante={currentContratante}
+                        contratanteId={currentContratante?.id} 
+                        onClose={() => setShowFinanceiroModal(false)} 
+                    />
+                </Modal>
+            )}
 
              {showCreateModal && (
                 <Modal onClose={() => setShowCreateModal(false)}>

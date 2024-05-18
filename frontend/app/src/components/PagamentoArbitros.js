@@ -7,6 +7,7 @@ import CreatePagamentoForm from './components-pagarbitros/CreatePagamentoForm';
 import EditPagamentoForm from './components-pagarbitros/EditPagamentoForm';
 import ConfirmDeleteModal from './components-pagarbitros/ConfirmDeleteModal';
 import DropDownComponent from './DropDownComponent';
+import Logout from './Logout';
 
 function PagamentoArbitros() {
 const { editPagamento, deletePagamento } = usePagamentoArbitros();
@@ -137,10 +138,12 @@ const handleCreateSubmit = async (formData) => {
             <div className="sidebar">
                 <h2>Menu</h2>
                 <ul>
-                    <li><a href="/arbitros">Postagens</a></li>
-                    <li><a href="/postagens">Árbitros</a></li>
+                    <li><a href="/postagens">Postagens</a></li>
+                    <li><a href="/arbitros">Árbitros</a></li>
                     <li><a href="/contratantes">Contratantes</a></li>
+                    <li><a href="/campeonatos">Campeonatos</a></li>
                     <DropDownComponent />
+                    <Logout />
                 </ul>
             </div>
             <div className="main-table">

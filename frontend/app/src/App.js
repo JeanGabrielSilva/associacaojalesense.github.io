@@ -8,6 +8,7 @@ import Portal from './components/Portal';
 import Contratantes from './components/Contratantes';
 import Postagens from './components/Postagens';
 import PagamentoContratantes from './components/PagamentoContratantes';
+import Campeonatos from './components/Campeonatos';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
             <Route path="/pagamentos-arbitros" element={<PagamentoArbitros/>}/>
             <Route path="/contratantes" element={<Contratantes/>}/>
             <Route path="/pagamentos-contratantes" element={<PagamentoContratantes/>}/>
+            <Route path="/campeonatos" element={<Campeonatos/>}/>
             <Route path="/portal" element={<Portal/>}/>
             <Route path="/postagens" element={<Postagens/>}/>
           </Routes>

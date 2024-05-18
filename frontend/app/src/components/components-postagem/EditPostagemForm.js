@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
 function EditPostagemForm({ postagem, onSubmit, setPostagens }) {
-
     const [formData, setFormData] = useState({
         titulo: '',
         imagem: null,
@@ -9,12 +8,12 @@ function EditPostagemForm({ postagem, onSubmit, setPostagens }) {
         tags: '',
         status: ''
     });
-    
+
     useEffect(() => {
         if (postagem) {
             setFormData({
                 ...postagem,
-                tags: postagem.tags.join(', ') // Converte o array de tags em uma string separada por vírgulas
+                tags: Array.isArray(postagem.tags) ? postagem.tags.join(', ') : postagem.tags // Garante que as tags sejam uma string separada por vírgulas
             });
         }
     }, [postagem]);
@@ -31,13 +30,12 @@ function EditPostagemForm({ postagem, onSubmit, setPostagens }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        // Transformar a string de tags de volta em um array
+        // Transformar a string de tags em um array
         const formattedData = {
             ...formData,
-            tags: formData.tags.split(',').map(tag => tag.trim())
+            tags: formData.tags ? formData.tags.split(',').map(tag => tag.trim()) : []
         };
         await onSubmit(formattedData);
-        // Atualizar a lista de postagens após a edição
         setPostagens(prevPostagens => prevPostagens.map(prevPostagem => prevPostagem._id === postagem._id ? formattedData : prevPostagem));
     };
 

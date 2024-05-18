@@ -221,3 +221,81 @@
 .edit-form input[type="number"] {
     width: 100%; 
 }
+
+
+.financeiro-modal {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  margin: 40px auto;
+  text-align: left;
+  font-family: 'Arial', sans-serif;
+}
+
+/* Modal Header */
+.financeiro-modal h2 {
+  font-size: 1.75rem;
+  margin-bottom: 20px;
+  color: #2b3e51;
+}
+
+/* Error Message */
+.error-message {
+  color: #ff4d4f;
+  font-size: 0.875rem;
+  margin-bottom: 20px;
+}
+/* Financeiro Content */
+.financeiro-content {
+  margin-bottom: 20px;
+}
+
+.financeiro-content p {
+  font-size: 1rem;
+  /* color: #333; */
+  margin: 10px 0;
+}
+
+/* .financeiro-content strong {
+  color: #2b3e51;
+} */
+
+/* Table Styles */
+.financeiro-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.financeiro-content th,
+.financeiro-content td {
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  text-align: left;
+  font-size: 0.875rem;
+}
+
+.financeiro-content th {
+  background-color: #f4f4f4;
+  color: #333;
+  font-weight: 600;
+}
+
+.financeiro-content td {
+  color: #555;
+}
+
+.financeiro-content tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+/* CSS para Débito e Crédito */
+.debito {
+  color: red;
+}
+
+.credito {
+  color: green;
+}

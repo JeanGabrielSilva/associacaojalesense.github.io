@@ -45,6 +45,37 @@ export const getArbitroById = async (req, res) => {
     }
 };
 
+export const getArbitroFinanceiro = async (req, res) => {
+    const id = req.params.id;
+    try {
+        const arbitro = await Arbitro.findByPk(id, {
+            include: [
+                {
+                    model: PagamentoArbitro,
+                    attributes: ['valor', 'pago'],
+                },
+            ],
+        });
+
+        if (!arbitro) {
+            return res.status(404).send({ message: `Não foi possível encontrar árbitro com o ID ${id}` });
+        }
+
+        const pagamentos = arbitro.pagamento_arbitros;
+        const debito = pagamentos.filter(p => p.pago === 0).reduce((acc, p) => acc + parseFloat(p.valor), 0);
+        const credito = pagamentos.filter(p => p.pago === 1).reduce((acc, p) => acc + parseFloat(p.valor), 0);
+
+        res.send({
+            arbitro: arbitro,
+            pagamentos: pagamentos,
+            debito: debito,
+            credito: credito,
+        });
+    } catch (err) {
+        res.status(500).send({ message: `Erro ao acessar pagamentos do árbitro com o ID ${id}` });
+    }
+};
+
 export const createArbitro = async (req, res) => {
     try {
         const novoArbitro = await Arbitro.create(req.body);
@@ -113,23 +144,3 @@ export const deleteArbitro = async (req, res) => {
         res.status(500).send({ message: `Erro ao excluir árbitro com o ID ${id}` });
     }
 };
-
-//     const id = req.params.id;
-//     try {
-//         // verifica se existem pagamentos associados ao arbitro
-//         const pagamentos = await PagamentoArbitro.findAll({ where: { id_arbitro: id } });
-//         if (pagamentos && pagamentos.length > 0) {
-//             return res.status(400).send({ message: "Este árbitro não pode ser excluído pois possui pagamentos associados. Remova os pagamentos primeiro." });
-//         }
-
-//         // se não houver pagamentos associados, exclui o arbitro
-//         const deleted = await Arbitro.destroy({ where: { id: id } });
-//         if (deleted) {
-//             res.send({ message: `Árbitro com o ID ${id} excluído com sucesso` });
-//         } else {
-//             res.status(404).send({ message: `Não foi possível encontrar árbitro com o ID ${id}` });
-//         }
-//     } catch (err) {
-//         res.status(500).send({ message: `Erro ao excluir árbitro com o ID ${id}` });
-//     }
-// };

@@ -4,15 +4,21 @@ import '../css/postalModal.css';
 const PostagemModal = ({ postagem, onClose }) => {
     if (!postagem) return null;
 
+    const handleOverlayClick = (event) => {
+        if (event.target === event.currentTarget) {
+            onClose();
+        }
+    };
+
     // Divide o conteúdo da postagem em parágrafos
     const paragrafoConteudo = postagem.conteudo.split('\n');
 
+
     return (
-        <div className="modal-overlay">
+        <div className="modal-overlay" onClick={handleOverlayClick}>
             <div className="modal-content-postagem">
                 <button className="modal-close" onClick={onClose}>X</button>
                 {postagem.imagem && <img src={`http://localhost:8080/${postagem.imagem}`} alt={postagem.titulo} style={{ maxWidth: '100px' }} className='modal-imagem' />}
-                {/* {postagem.imagem && <img src={postagem.imagem} alt={postagem.titulo} className="modal-imagem" />} */}
                 <h2>{postagem.titulo}</h2>
                 {paragrafoConteudo.map((paragrafo, index) => (
                     <p key={index}>{paragrafo}</p>
