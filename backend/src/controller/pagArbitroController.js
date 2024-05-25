@@ -28,6 +28,20 @@ export const getPagamentosArbitro = async (req, res) => {
     }
 };
 
+export const getPagamentosArbitros = async (req, res) => {
+    try {
+        const pagamentos = await PagamentoArbitro.findAll({
+            include: [{
+                model: Arbitro,
+                as: 'arbitro'
+            }]
+        });
+        res.send(pagamentos);
+    } catch (err) {
+        res.status(500).send({ message: err.message || "Ocorreu algum erro ao buscar os pagamentos." });
+    }
+};
+
 export const getPagamentoArbitroById = async (req, res) => {
     const id = req.params.id;
     try {

@@ -10,6 +10,7 @@ import EditArbitroForm from './components-arbitros/EditArbitroForm';
 import ConfirmDeleteModal from './components-arbitros/ConfirmDeleteModal';
 import FinanceiroArbitroForm from './components-arbitros/FinanceiroArbitroForm';
 import Logout from './Logout';
+import SearchInput from './SearchInput';
 
 function Arbitros() {
     const navigate = useNavigate();
@@ -50,6 +51,32 @@ function Arbitros() {
 
         fetchArbitros();
     }, [navigate, page, limit]);
+
+   
+    const fetchArbitrosByName = async (search = '') => {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                navigate('/login');
+                return;
+            }
+
+            const response = await axios.get(`http://localhost:8080/arbitros/all?search=${encodeURIComponent(search)}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            setArbitros(response.data);
+        } catch (error) {
+            console.error('Erro ao buscar árbitros:', error);
+            setError('Erro ao buscar árbitros');
+        }
+    };
+
+    // Hook para buscar árbitros ao montar o componente
+    useEffect(() => {
+        fetchArbitrosByName();
+    }, []);
 
 
     const handleEdit = (arbitro) => {
@@ -131,7 +158,10 @@ function Arbitros() {
             </div>
             <div className="main-table">
                 <h2>Lista de Árbitros</h2>
+                <div className="main-input-button">
                 <button className="btn-open-modal" onClick={() => setShowCreateModal(true)}>Adicionar Árbitro</button>
+                <SearchInput onSearch={fetchArbitrosByName} />
+                </div>
                 {error && <p>{error}</p>}
                 <table>
                     <thead>

@@ -8,6 +8,8 @@ import EditPagamentoForm from './components-pagarbitros/EditPagamentoForm';
 import ConfirmDeleteModal from './components-pagarbitros/ConfirmDeleteModal';
 import DropDownComponent from './DropDownComponent';
 import Logout from './Logout';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 function PagamentoArbitros() {
 const { editPagamento, deletePagamento } = usePagamentoArbitros();
@@ -133,6 +135,54 @@ const handleCreateSubmit = async (formData) => {
         }
     };
 
+    const fetchAllPagamentos = async () => {
+        try {
+            const token = localStorage.getItem('token'); // Obter o token do localStorage
+            const response = await axios.get('http://localhost:8080/pagamento-arbitro/all', {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+    
+            // console.log('Dados dos pagamentos:', response.data); // Adicione este log
+            return response.data;
+        } catch (error) {
+            console.error('Erro ao buscar os pagamentos:', error);
+            return [];
+        }
+    };
+    
+    const generatePDF = async () => {
+        const doc = new jsPDF();
+    
+        // Buscar todos os pagamentos
+        const pagamentos = await fetchAllPagamentos();
+        // console.log('Pagamentos para o PDF:', pagamentos);
+    
+        // Definir as colunas e linhas da tabela
+        const tableColumn = ["ID", "Árbitro", "Valor", "Pago"];
+        const tableRows = [];
+    
+        pagamentos.forEach(pagamento => {
+            const pagamentoData = [
+                pagamento.id,
+                pagamento.arbitro?.nome || 'Desconhecido',
+                pagamento.valor,
+                pagamento.pago ? 'Sim' : 'Não'
+            ];
+            tableRows.push(pagamentoData);
+        });
+    
+        // Adicionar a tabela ao PDF
+        doc.autoTable({
+            head: [tableColumn],
+            body: tableRows,
+            startY: 20
+        });
+        // Adicionar um título
+        doc.text("Lista de Pagamentos dos Árbitros", 14, 15);
+        // Fazer o download do PDF
+        doc.save("pagamentos_arbitros.pdf");
+    };
+
     return (
         <div className="container">
             <div className="sidebar">
@@ -149,6 +199,7 @@ const handleCreateSubmit = async (formData) => {
             <div className="main-table">
                 <h2>Pagamentos dos Árbitros</h2>
                 <button className="btn-open-modal" onClick={() => setShowCreateModal(true)}>Adicionar Pagamento</button>
+                <button className="btn-open-modal" onClick={generatePDF}>Baixar PDF</button>
                 <table>
                     <thead>
                         <tr>

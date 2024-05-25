@@ -1,10 +1,14 @@
 import Contratante from '../model/contratante.js'; 
 import Campeonato from '../model/campeonato.js';
 import PagamentoContratante from '../model/pagamentoContratante.js';
+import { Op } from 'sequelize';
 
 export const getContratantesAll = async (req, res) => {
     try {
-        const contratantes = await Contratante.findAll();
+        const { search } = req.query;
+        const contratantes = search
+            ? await Contratante.findAll({ where: { nome: { [Op.like]: `%${search}%` } } })
+            : await Contratante.findAll();
         res.send(contratantes);
     } catch (err) {
         res.status(500).send({ message: err.message || "Ocorreu algum erro ao buscar os contratantes." });

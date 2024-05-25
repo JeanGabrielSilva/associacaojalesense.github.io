@@ -1,9 +1,19 @@
 import Arbitro from '../model/arbitro.js';
 import PagamentoArbitro from '../model/pagamentoArbitro.js';
+import { Op } from 'sequelize';
 
 export const getArbitrosAll = async (req, res) => {
     try {
-        const arbitros = await Arbitro.findAll();
+        const { search } = req.query;
+        const arbitros = search
+            ? await Arbitro.findAll({ 
+                where: { 
+                    nome: { 
+                        [Op.like]: `%${search}%` 
+                    } 
+                } 
+            })
+            : await Arbitro.findAll();
         res.send(arbitros);
     } catch (err) {
         res.status(500).send({ message: err.message || "Ocorreu algum erro ao buscar os árbitros." });

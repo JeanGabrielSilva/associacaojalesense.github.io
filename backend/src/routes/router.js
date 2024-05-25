@@ -3,7 +3,7 @@ import { getUsers, login, requireAuth } from '../controller/loginController.js';
 // import { createCidade, getCidades, getCidadeById, updateCidade, deleteCidade } from '../controller/cidadeController.js';
 import { createCampeonato, getCampeonatos, getCampeonatoById, updateCampeonato, getCampeonatosAll, deleteCampeonato} from '../controller/campeonatoController.js';
 import { createArbitro, deleteArbitro, getArbitroById, getArbitroFinanceiro, getArbitros, getArbitrosAll, patchArbitro, updateArbitro } from '../controller/arbitroController.js';
-import { createPagamentoArbitro, deletePagamentoArbitro, getPagamentoArbitroById, getPagamentosArbitro, patchPagamentoArbitro, updatePagamentoArbitro } from '../controller/pagArbitroController.js';
+import { createPagamentoArbitro, deletePagamentoArbitro, getPagamentoArbitroById, getPagamentosArbitro, getPagamentosArbitros, patchPagamentoArbitro, updatePagamentoArbitro } from '../controller/pagArbitroController.js';
 import { createPostagem, uploadMiddleware, deletePostagem, getPostagemById, getPostagens, getPostagensPublicadas, publicPostagem, updatePostagem } from '../controller/postagemController.js';
 import { createContratante, deleteContratante, getContratanteById, getContratanteFinanceiro, getContratantes, getContratantesAll, updateContratante } from '../controller/contratanteController.js';
 import { createPagamento, deletePagamento, getPagamentoById, getPagamentos, getPagamentosAll, updatePagamento } from '../controller/pagContratanteController.js';
@@ -63,6 +63,7 @@ route.put('/contratantes/:id', requireAuth, updateContratante);
 route.delete('/contratantes/:id', requireAuth, deleteContratante);
 
 //PAGAMENTO ARBITRO
+route.get('/pagamento-arbitro/all', requireAuth, getPagamentosArbitros);
 route.get('/pagamento-arbitro', requireAuth, getPagamentosArbitro);
 route.get('/pagamento-arbitro/:id', requireAuth, getPagamentoArbitroById);
 route.post('/pagamento-arbitro', requireAuth, createPagamentoArbitro);

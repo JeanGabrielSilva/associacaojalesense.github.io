@@ -6,6 +6,9 @@ import EditPagamentoForm from './components-pagcontratantes/EditPagamentoForm';
 import ConfirmDeleteModal from './components-pagcontratantes/ConfirmDeleteModal';
 import DropDownComponent from './DropDownComponent';
 import Logout from './Logout';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
+
 
 function PagamentoContratantes() {
     const [pagamentos, setPagamentos] = useState([]); 
@@ -59,7 +62,6 @@ function PagamentoContratantes() {
         fetchPagamentos(currentPage);
         fetchContratantes();
     }, [currentPage]);
-
 
     const handleCreateSubmit = useCallback(async (formData) => {
         try {
@@ -139,6 +141,54 @@ function PagamentoContratantes() {
         setShowDeleteModal(true);
     }, []);
 
+    const fetchAllPagamentos = async () => {
+        try {
+            const token = localStorage.getItem('token'); 
+            const response = await axios.get('http://localhost:8080/pagamento-contratante/all', {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+    
+            // console.log('Dados dos pagamentos:', response.data); // Adicione este log
+            return response.data;
+        } catch (error) {
+            console.error('Erro ao buscar os pagamentos:', error);
+            return [];
+        }
+    };
+    
+    const generatePDF = async () => {
+        const doc = new jsPDF();
+    
+        // Buscar todos os pagamentos
+        const pagamentos = await fetchAllPagamentos();
+        // console.log('Pagamentos para o PDF:', pagamentos); // Adicione este lo
+    
+        // Definir as colunas e linhas da tabela
+        const tableColumn = ["ID", "Contratante", "Valor", "Pago"];
+        const tableRows = [];
+    
+        pagamentos.forEach(pagamento => {
+            const pagamentoData = [
+                pagamento.id,
+                pagamento.contratante?.nome || 'Desconhecido',
+                pagamento.valor,
+                pagamento.pago ? 'Sim' : 'Não'
+            ];
+            tableRows.push(pagamentoData);
+        });
+    
+        // Adicionar a tabela ao PDF
+        doc.autoTable({
+            head: [tableColumn],
+            body: tableRows,
+            startY: 20
+        });
+        // Adicionar um título
+        doc.text("Lista de Pagamentos dos Contratantes", 14, 15);
+        // Fazer o download do PDF
+        doc.save("pagamentos_contratantes.pdf");
+    };
+
     const handlePageChange = useCallback((event) => {
         setCurrentPage(Number(event.target.value));
     }, []);
@@ -159,6 +209,7 @@ function PagamentoContratantes() {
             <div className="main-table">
                 <h2>Pagamento dos Contratantes</h2>
                 <button className="btn-open-modal" onClick={() => setShowCreateModal(true)}>Adicionar Pagamento</button>
+                <button className="btn-open-modal" onClick={generatePDF}>Baixar PDF</button>
                 {error && <p>{error}</p>}
                 <table>
                     <thead>

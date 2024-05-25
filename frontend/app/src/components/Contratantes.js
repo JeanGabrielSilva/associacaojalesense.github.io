@@ -7,10 +7,12 @@ import EditContratanteForm from './components-contratantes/EditContratanteForm';
 import ConfirmDeleteModal from './components-contratantes/ConfirmDeleteModal';
 import FinanceiroContratanteForm from './components-contratantes/FinanceiroContratanteForm';
 import Logout from './Logout';
+import SearchInput from './SearchInput';
+import { useNavigate } from 'react-router-dom';
 // import useContratantes from '../hooks/contratantes/useContratantes';
 
 function Contratantes() {
-
+    const navigate = useNavigate();
     const [contratantes, setContratantes] = useState([]);
     const [showFinanceiroModal, setShowFinanceiroModal] = useState(false);
     const [showCreateModal, setShowCreateModal] = useState(false);
@@ -45,6 +47,32 @@ function Contratantes() {
 
         fetchContratantes(currentPage, limit);
     }, [currentPage, limit]);
+
+    
+    const fetchContratantesByName = async (search = '') => {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                navigate('/login');
+                return;
+            }
+
+            const response = await axios.get(`http://localhost:8080/contratantes/all?search=${encodeURIComponent(search)}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            setContratantes(response.data);
+        } catch (error) {
+            console.error('Erro ao buscar contratantes:', error);
+            setError('Erro ao buscar contratantes');
+        }
+    };
+
+    useEffect(() => {
+        fetchContratantesByName();
+    }, []);
+
 
     const createContratante = async (contratante) => {
         const token = localStorage.getItem('token');
@@ -156,7 +184,10 @@ function Contratantes() {
             </div>
             <div className="main-table">
             <h2>Lista de Contratantes</h2>
+            <div className="main-input-button">
             <button className="btn-open-modal" onClick={() => setShowCreateModal(true)}>Adicionar Contrantante</button>
+            <SearchInput onSearch={fetchContratantesByName} />
+            </div>
             {/* {error && <p>{error}</p>} */}
             <table>
                 <thead>
