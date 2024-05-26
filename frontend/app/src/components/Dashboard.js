@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import DropDownComponent from './DropDownComponent';
 import Logout from './Logout';
+import LookerGraph from './LookerGraph'; // Importe o componente do gráfico
 
 function Dashboard() {
     return (
@@ -18,12 +19,9 @@ function Dashboard() {
                 </ul>
             </div>
             <div className="main-table">
-                <h2>Lista de dashboard</h2>
-    
-                <div className="dashboardLink">
-                    
-                </div>
+                <LookerGraph /> {/* Adicione o componente do gráfico aqui */}
             </div>
+            
         </div>
     );
 }
