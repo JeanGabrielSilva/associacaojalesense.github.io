@@ -192,6 +192,7 @@ const handleCreateSubmit = async (formData) => {
                     <li><a href="/arbitros">Árbitros</a></li>
                     <li><a href="/contratantes">Contratantes</a></li>
                     <li><a href="/campeonatos">Campeonatos</a></li>
+                    <li><a href="/dashboard">Dashboard</a></li>
                     <DropDownComponent />
                     <Logout />
                 </ul>
