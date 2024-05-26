@@ -9,6 +9,7 @@ import Contratantes from './components/Contratantes';
 import Postagens from './components/Postagens';
 import PagamentoContratantes from './components/PagamentoContratantes';
 import Campeonatos from './components/Campeonatos';
+import Dashboard from './components/Dashboard';
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
             <Route path="/campeonatos" element={<Campeonatos/>}/>
             <Route path="/portal" element={<Portal/>}/>
             <Route path="/postagens" element={<Postagens/>}/>
+            <Route path="/dashboard" element={<Dashboard/>}/>
           </Routes>
         </header>
       </div>
