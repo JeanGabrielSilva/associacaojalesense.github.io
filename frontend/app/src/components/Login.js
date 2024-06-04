@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import './css/login.css';
+import logo from '../img/logo_projeto.jpg';
 
 function Login() {
     const [username, setUsername] = useState('');
@@ -71,12 +72,12 @@ function Login() {
         <div className="login-form-wrap">
             {user === null ? (
                 <div>
-                    <h2>Login</h2>
+                     <img src={logo} alt="Logo" className="logo" /> {/* Adiciona a logo */}
                     <form className='login-form' onSubmit={handleLogin}>
                         <input
                             type="username"
                             name="username"
-                            placeholder="Username"
+                            placeholder="Usuário"
                             required
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
@@ -84,7 +85,7 @@ function Login() {
                         <input
                             type="password"
                             name="password"
-                            placeholder="Password"
+                            placeholder="Senha"
                             required
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
@@ -93,7 +94,7 @@ function Login() {
                             type="submit"
                             className='btn-login'
                         >
-                            Login
+                            Entrar
                         </button>
                     </form>
                     <p>{error}</p>
