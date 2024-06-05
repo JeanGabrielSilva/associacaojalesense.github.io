@@ -69,6 +69,7 @@ function Login() {
 
 
     return (
+        <div className="login-page">
         <div className="login-form-wrap">
             {user === null ? (
                 <div>
@@ -111,6 +112,7 @@ function Login() {
                     </button>
                 </div>
             )}
+        </div>
         </div>
     );
 }
