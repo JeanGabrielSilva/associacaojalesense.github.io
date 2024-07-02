@@ -31,7 +31,6 @@ const Portal = () => {
                 <h2>Menu</h2>
                 <ul>
                     <li><a href="/portal">Publicações</a></li>
-                    <li><a href="#sobre">Sobre nós</a></li>
                 </ul>
             </div>
             <div className="portal">
